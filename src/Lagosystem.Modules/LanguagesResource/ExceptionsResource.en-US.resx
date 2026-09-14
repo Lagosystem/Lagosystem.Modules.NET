@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GeneralArgumentNullException" xml:space="preserve">
+    <value>The parameter '{0}' cannot be null.</value>
+  </data>
+  <data name="InsufficientBuffer" xml:space="preserve">
+    <value>The buffer provided is insufficient for the operation</value>
+  </data>
+  <data name="ValueCannotBeDifferentFrom" xml:space="preserve">
+    <value>The parameter '{0}' cannot be different from '{1}'.
+</value>
+  </data>
+  <data name="ValueCannotBeEqualTo" xml:space="preserve">
+    <value>The parameter '{0}' cannot be equal to '{1}'.
+</value>
+  </data>
+  <data name="ValueCannotBeGreatherThan" xml:space="preserve">
+    <value>The parameter '{0}' cannot be greater than '{1}'.
+</value>
+  </data>
+  <data name="ValueCannotBeGreatherOrEqualTo" xml:space="preserve">
+    <value>The parameter '{0}' cannot be greater than or equal to '{1}'.
+</value>
+  </data>
+  <data name="ValueCannotBeLessThan" xml:space="preserve">
+    <value>The parameter '{0}' cannot be less than '{1}'.
+</value>
+  </data>
+  <data name="ValueCannotBeLessOrEqualTo" xml:space="preserve">
+    <value>The parameter '{0}' cannot be less than '{1}'.
+</value>
+  </data>
+  <data name="DuplicateValueTStringListAddObject" xml:space="preserve">
+    <value>Duplicate string not allowed (Duplicates=Error).</value>
+  </data>
+  <data name="ErrorMessageDiagnostic" xml:space="preserve">
+    <value>An unexpected diagnostic error occurred in the '{0}' module. Details: {1}</value>
+  </data>
+  <data name="ErrorMessageReportError" xml:space="preserve">
+    <value>An error occurred in {1}.{2}:
+Additional message: {3}{0}
+Exception message: {4}{0}
+Stack Trace:{0}{5}
+</value>
+  </data>
+  <data name="StringListTryingToFinishWithNoBeginUpdate" xml:space="preserve">
+    <value>EndUpdate is called without a corresponding BeginUpdate.</value>
+  </data>
+  <data name="StringList_CopyTo_ArrayDestinationTooSmall" xml:space="preserve">
+    <value>The destination array does not have enough space. Required {0}, space in destination array: {1}</value>
+  </data>
+  <data name="InvalidArgumentType" xml:space="preserve">
+    <value>The type {0} provided is invalid! The expected type(s) was/were {1}</value>
+  </data>
+  <data name="ArrayRankMustBeOne" xml:space="preserve">
+    <value>The array you provided has {0} dimensions, but only a one‑dimensional array is supported.</value>
+  </data>
+  <data name="ReentrantCollectionChangeNotAllowed" xml:space="preserve">
+    <value>A reentrant collection change was detected because {0} event handlers are subscribed, but collection modifications only support a single active handler.</value>
+  </data>
+  <data name="InsertNotAllowedWhenSorted" xml:space="preserve">
+    <value>Inserting items at a specific position is not allowed when the list is sorted. Use Add or AddObject to modify sorted lists.
+</value>
+  </data>
+  <data name="Base64StreamLimitExceeded" xml:space="preserve">
+    <value>The accumulated stream size ({0} bytes / {1}) exceeded the maximum allowed limit for Base64 conversion ({2} bytes / {3}).</value>
+  </data>
+  <data name="Base64StreamSizeLimitExceeded" xml:space="preserve">
+    <value>The stream size ({0} bytes / {1}) exceeds the maximum allowed limit for Base64 conversion ({2} bytes / {3}).</value>
+  </data>
+  <data name="OverlimitBase64Memory" xml:space="preserve">
+    <value>The estimated decoded size ({0} bytes / {1}) exceeds the maximum allowed limit for Base64 conversion ({2} bytes / {3}).</value>
+  </data>
+  <data name="NegativeValueDennied" xml:space="preserve">
+    <value>The value for {0} cannot be negative! Received value: {1}</value>
+  </data>
+  <data name="DivideByZeroCalculated" xml:space="preserve">
+    <value>The denominator calculated to zero, causing an invalid division by zero operation.</value>
+  </data>
+  <data name="DivideByZeroReceived" xml:space="preserve">
+    <value>The old value received in {0} cannot be zero as it results in a division by zero when calculating percentage change.</value>
+  </data>
+  <data name="InterestRateConvergenceFailed" xml:space="preserve">
+    <value>The interest rate calculation failed to converge. Verify that the inputs are financially realistic.</value>
+  </data>
+  <data name="PaymentInsufficientForInterest" xml:space="preserve">
+    <value>The periodic payment is too low to cover the interest accrued. The loan cannot be amortised.</value>
+  </data>
+  <data name="FinancialPeriodicRateOutOfRange" xml:space="preserve">
+    <value>The periodic interest rate must be greater than -100%.</value>
+  </data>
+  <data name="FinancialPaymentTimingInvalid" xml:space="preserve">
+    <value>The payment timing is invalid. Use EndOfPeriod or BeginningOfPeriod.</value>
+  </data>
+  <data name="FinancialResultNotFinite" xml:space="preserve">
+    <value>The financial calculation result is not finite.</value>
+  </data>
+  <data name="FinancialPaymentCannotAmortizeLoan" xml:space="preserve">
+    <value>The payment cannot amortize the loan at this interest rate.</value>
+  </data>
+  <data name="FinancialPeriodsNotReal" xml:space="preserve">
+    <value>The cash flows do not produce a real number of periods.</value>
+  </data>
+  <data name="FinancialInterestRateNotUnique" xml:space="preserve">
+    <value>An indeterminate cash-flow equation has no unique interest rate.</value>
+  </data>
+  <data name="FinancialCashFlowsRateNotUnique" xml:space="preserve">
+    <value>The cash flows do not identify a unique interest rate.</value>
+  </data>
+</root>

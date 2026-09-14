@@ -1,0 +1,75 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>Lagosystem</PackageId>
+    <Authors>Leonardo Nicolas</Authors>
+    <Description>Modules, functions and others</Description>
+    <Company>Lagosystem</Company>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Lagosystem.Modules</AssemblyName>
+    <RootNamespace>Lagosystem.Modules</RootNamespace>
+    <LangVersion>11</LangVersion>
+  </PropertyGroup>
+
+   <!-- Quando compilar no Windows -->
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <DefineConstants>$(DefineConstants);OS_WINDOWS</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Quando compilar no Linux -->
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <DefineConstants>$(DefineConstants);OS_LINUX</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Quando compilar no macOS -->
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <DefineConstants>$(DefineConstants);OS_MAC</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="LanguagesResource\ExceptionsResource.pt-BR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>pt-br.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LanguagesResource\ExceptionsResource.en-US.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Exceptions.en-US.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LanguagesResource\ExceptionsResource.es-AR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Exceptions.es-AR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LanguagesResource\ExceptionsResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionsResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="LanguagesResource\ExceptionsResource.pt-BR.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExceptionsResource.pt-BR.resx</DependentUpon>
+    </Compile>
+    <Compile Update="LanguagesResource\ExceptionsResource.en-US.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExceptionsResource.en-US.resx</DependentUpon>
+    </Compile>
+    <Compile Update="LanguagesResource\ExceptionsResource.es-AR.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExceptionsResource.es-AR.resx</DependentUpon>
+    </Compile>
+    <Compile Update="LanguagesResource\ExceptionsResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ExceptionsResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+  </ItemGroup>
+
+</Project>
