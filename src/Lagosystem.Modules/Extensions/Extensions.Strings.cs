@@ -77,7 +77,7 @@ namespace Lagosystem.Modules.Extensions
                     lastWasSpace = true;
                     continue;
                 }
-                destination[written++] = mustBeUpperCase ? ch : char.ToUpperInvariant(ch);
+                destination[written++] = mustBeUpperCase ? char.ToUpperInvariant(ch) : ch;
                 lastWasSpace = false;
             }
             return written;
