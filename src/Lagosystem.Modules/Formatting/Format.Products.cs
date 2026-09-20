@@ -88,20 +88,32 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="ean">The <see cref="ReadOnlySpan{T}"/> containing the EAN code.</param>
         /// <param name="leftZero">Determines whether to preserve or pad leading zeros.</param>
         /// <returns>The formatted EAN code, or <see cref="string.Empty"/> if invalid.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string FormatEanCode(ReadOnlySpan<char> ean, bool leftZero = false)
         {
             if (ean.IsEmpty) return string.Empty;
-            
+
             const int maxSizeEan = 14;
-            int sizeEan = Math.Min(ean.Length, maxSizeEan);
-            Span<char> buffer = stackalloc char[sizeEan];
+
+            Span<char> buffer = stackalloc char[maxSizeEan];
+            int digitsWritten = 0;
+
+            for (int index = 0; index < ean.Length; index++)
+            {
+                char character = ean[index];
+                if (character is < '0' or > '9') continue; // EAN/GTIN aceita somente dígitos ASCII.
+                if (digitsWritten == maxSizeEan) return string.Empty; // Não truncar silenciosamente um identificador.
+                buffer[digitsWritten++] = character;
+            }
+
+            if (digitsWritten == 0) return string.Empty;
+            if (!leftZero || digitsWritten >= maxSizeEan) return new string(buffer[..digitsWritten]);
             
-            int newLengthDest = !leftZero 
-                ? FormatAndValidationHelper.ExtractOnlyNumbers(ean, buffer) 
-                : FormatAndValidationHelper.CleanStringInMemory(ean, buffer);
-                
-            return string.Create(sizeEan, buffer.ToArray(), static (span, state) => state.AsSpan(0, state.Length).CopyTo(span[..state.Length]));
+            int zeroCount = maxSizeEan - digitsWritten;
+            buffer[..digitsWritten].CopyTo(buffer[zeroCount..]);// CopyTo suporta sobreposição dos spans.
+            buffer[..zeroCount].Fill('0');
+            digitsWritten = maxSizeEan;
+
+            return new string(buffer[..digitsWritten]);
         }
 
         #endregion
