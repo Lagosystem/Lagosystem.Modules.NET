@@ -15,7 +15,7 @@ namespace Lagosystem.Modules.Helpers
         internal static void ThrowNowOverlimitBase64Memory(int base64StringLength)
         {
             long estimatedBytes = (long)base64StringLength * 3 / 4;
-            long maxAllowedSize = LagosystemSettings.MaxBase64StreamSize;
+            long maxAllowedSize = Settings.MaxBase64StreamSize;
             //$"The estimated decoded size ({0} bytes / {1}) exceeds the maximum allowed limit for Base64 conversion ({2} bytes / {3})."
             string message = string.Format(
                 ExceptionsResource.OverlimitBase64Memory,
@@ -36,7 +36,7 @@ namespace Lagosystem.Modules.Helpers
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal static void ThrowBase64StreamSizeLimitExceeded(long remainingBytes)
         {
-            long maxAllowedSize = LagosystemSettings.MaxBase64StreamSize;
+            long maxAllowedSize = Settings.MaxBase64StreamSize;
             // The stream size ({0} bytes / {1}) exceeds the maximum allowed limit for Base64 conversion ({2} bytes / {3}).
             // O tamanho do stream ({0} bytes / {1}) excedeu o limite máximo permitido para conversão de Base64 ({2} bytes / {3}).
             string message = string.Format(
@@ -52,7 +52,7 @@ namespace Lagosystem.Modules.Helpers
         [MethodImpl(MethodImplOptions.NoInlining)]
         internal static void ThrowBase64StreamLimitExceeded(long accumulatedBytes)
         {
-            long maxAllowedSize = LagosystemSettings.MaxBase64StreamSize;
+            long maxAllowedSize = Settings.MaxBase64StreamSize;
             // The accumulated stream size ({0} bytes / {1}) exceeded the maximum allowed limit for Base64 conversion ({2} bytes / {3}).
             // O tamanho acumulado do stream ({0} bytes / {1}) excedeu o limite máximo permitido para conversão Base64 ({2} bytes / {3}).
             string message = string.Format(
