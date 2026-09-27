@@ -26,7 +26,7 @@ namespace Lagosystem.Modules.Conversions
 
         /// <summary>
         /// Reads the contents of a stream and converts it to its equivalent string representation encoded with base-64 digits.
-        /// Safely limits the read size according to <see cref="LagosystemSettings.MaxBase64StreamSize"/> to prevent out-of-memory exceptions.
+        /// Safely limits the read size according to <see cref="Settings.MaxBase64StreamSize"/> to prevent out-of-memory exceptions.
         /// </summary>
         /// <param name="stream">The input stream to read from.</param>
         /// <returns>
@@ -40,7 +40,7 @@ namespace Lagosystem.Modules.Conversions
         {
             if (stream is null) return string.Empty;
 
-            long maxAllowedSize = LagosystemSettings.MaxBase64StreamSize;
+            long maxAllowedSize = Settings.MaxBase64StreamSize;
             if (stream.CanSeek)
             {
                 long remainingBytes = stream.Length - stream.Position;
@@ -54,7 +54,7 @@ namespace Lagosystem.Modules.Conversions
                 return Convert.ToBase64String(buffer, 0, bytesRead);
             }
             using MemoryStream ms = new MemoryStream();
-            byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(LagosystemSettings.DefaultStreamBufferSize);
+            byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(Settings.DefaultStreamBufferSize);
             
             try
             {
@@ -79,7 +79,7 @@ namespace Lagosystem.Modules.Conversions
         
         /// <summary>
         /// Asynchronously reads the contents of a stream and converts it to its equivalent string representation encoded with base-64 digits.
-        /// Safely limits the read size according to <see cref="LagosystemSettings.MaxBase64StreamSize"/> to prevent out-of-memory exceptions.
+        /// Safely limits the read size according to <see cref="Settings.MaxBase64StreamSize"/> to prevent out-of-memory exceptions.
         /// </summary>
         /// <param name="stream">The input stream to read from.</param>
         /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous read operation.</param>
@@ -96,7 +96,7 @@ namespace Lagosystem.Modules.Conversions
         public static async Task<string> ToBase64Async(Stream? stream, CancellationToken cancellationToken = default)
         {
             if (stream is null) return string.Empty;
-            long maxAllowedSize = LagosystemSettings.MaxBase64StreamSize;
+            long maxAllowedSize = Settings.MaxBase64StreamSize;
             if (stream.CanSeek)
             {
                 long remainingBytes = stream.Length - stream.Position;
@@ -108,7 +108,7 @@ namespace Lagosystem.Modules.Conversions
             }
             
             using MemoryStream ms = new();
-            byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(LagosystemSettings.DefaultStreamBufferSize);
+            byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(Settings.DefaultStreamBufferSize);
             try
             {
                 int read;
@@ -130,7 +130,7 @@ namespace Lagosystem.Modules.Conversions
 
         /// <summary>
         /// Converts the specified base-64 string into its equivalent 8-bit unsigned integer array.
-        /// Safely limits the decoded size according to <see cref="LagosystemSettings.MaxBase64StreamSize"/> to prevent memory overflow.
+        /// Safely limits the decoded size according to <see cref="Settings.MaxBase64StreamSize"/> to prevent memory overflow.
         /// </summary>
         /// <param name="base64">The base-64 string to convert.</param>
         /// <returns>An array of bytes representing the decoded data, or an empty array if the string is null or blank.</returns>
@@ -141,14 +141,14 @@ namespace Lagosystem.Modules.Conversions
         {
             if (base64.IsBlank()) return Array.Empty<byte>();
             if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
-            if ((((long)base64!.Length * 3) / 4) > LagosystemSettings.MaxBase64StreamSize) 
+            if ((((long)base64!.Length * 3) / 4) > Settings.MaxBase64StreamSize) 
                 ThrowHelper.ThrowNowOverlimitBase64Memory(base64.Length);
             return Convert.FromBase64String(base64);
         }
 
         /// <summary>
         /// Converts the specified base-64 string into binary data and writes it synchronously to the provided destination stream.
-        /// Safely limits the decoded size according to <see cref="LagosystemSettings.MaxBase64StreamSize"/>.
+        /// Safely limits the decoded size according to <see cref="Settings.MaxBase64StreamSize"/>.
         /// </summary>
         /// <param name="base64">The base-64 string to convert.</param>
         /// <param name="destination">The stream where the decoded bytes will be written (e.g., a FileStream or MemoryStream).</param>
@@ -161,7 +161,7 @@ namespace Lagosystem.Modules.Conversions
             if (destination is null) throw new ArgumentNullException(nameof(destination));
             if (base64.IsBlank()) return;
             if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
-            if ((((long)base64!.Length * 3) / 4) > LagosystemSettings.MaxBase64StreamSize) 
+            if ((((long)base64!.Length * 3) / 4) > Settings.MaxBase64StreamSize) 
                 ThrowHelper.ThrowNowOverlimitBase64Memory(base64.Length);
             byte[] buffer = Convert.FromBase64String(base64);
             destination.Write(buffer, 0, buffer.Length);
@@ -169,7 +169,7 @@ namespace Lagosystem.Modules.Conversions
 
         /// <summary>
         /// Converts the specified base-64 string into binary data and writes it asynchronously to the provided destination stream.
-        /// Safely limits the decoded size according to <see cref="LagosystemSettings.MaxBase64StreamSize"/>.
+        /// Safely limits the decoded size according to <see cref="Settings.MaxBase64StreamSize"/>.
         /// </summary>
         /// <param name="base64">The base-64 string to convert.</param>
         /// <param name="destination">The stream where the decoded bytes will be written.</param>
@@ -183,7 +183,7 @@ namespace Lagosystem.Modules.Conversions
             if (destination is null) throw new ArgumentNullException(nameof(destination));
             if (base64.IsBlank()) return;
             if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
-            if ((((long)base64!.Length * 3) / 4) > LagosystemSettings.MaxBase64StreamSize) 
+            if ((((long)base64!.Length * 3) / 4) > Settings.MaxBase64StreamSize) 
                 ThrowHelper.ThrowNowOverlimitBase64Memory(base64!.Length);
             byte[] buffer = Convert.FromBase64String(base64);
             await destination.WriteAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
