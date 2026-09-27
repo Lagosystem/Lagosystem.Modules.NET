@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics.CodeAnalysis;
 using Lagosystem.Modules.LanguagesResource;
 
 namespace Lagosystem.Modules.Helpers
@@ -72,14 +73,14 @@ namespace Lagosystem.Modules.Helpers
             throw ThrowLessThan(value, limit, paramName);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [DoesNotReturn]
         internal static void ThrowIfLessOrEqualsThan<T>(T value, T limit, 
             [jba.InvokerParameterName, jba.LocalizationRequired(false)] string? paramName = null)
             where T : IComparable<T>
         {
             // CompareTo retorna <= 0 se o valor for menor ou igual ao limite
-            if (value.CompareTo(limit) > 0) return;
-            throw ThrowLessOrEqualsThan(value, limit, paramName);
+            if (!(value.CompareTo(limit) > 0)) throw ThrowLessOrEqualsThan(value, limit, paramName);
         }
 
 
