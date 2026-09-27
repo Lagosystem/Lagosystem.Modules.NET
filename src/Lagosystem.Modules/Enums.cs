@@ -29,6 +29,12 @@ namespace Lagosystem.Modules
 
         /// <summary>Represents an Exabyte (EB), equivalent to 1,152,921,504,606,846,976 Bytes (1,024 PB).</summary>
         Exabyte = Petabyte * 1024L,
+
+        /// <summary>
+        /// Represents the absolute maximum capacity (9,223,372,036,854,775,807 Bytes, which is approximately 8 EB).
+        /// Used as the theoretical upper limit because a Zettabyte exceeds the maximum size of a 64-bit integer.
+        /// </summary>
+        MaxDataUnitSize = long.MaxValue,
     }
     
     /// <summary>
