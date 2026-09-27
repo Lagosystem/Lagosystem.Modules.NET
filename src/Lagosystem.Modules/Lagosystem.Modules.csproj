@@ -46,6 +46,7 @@
       <LastGenOutput>ExceptionsResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <!-- TODO: Adicionar suporte de tradução à outros idiomas. -->
   <ItemGroup>
     <Compile Update="LanguagesResource\ExceptionsResource.pt-BR.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -70,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
 </Project>
