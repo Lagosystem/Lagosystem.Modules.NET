@@ -25,18 +25,22 @@ public static class StringsExtensions
     {
         if (source.IsBlank()) return string.Empty;
         char[]? rented = null;
-        int safeBufferSize = LagosystemSettings.DefaultSpanBufferSize;
-        if (source!.Length > safeBufferSize) rented = ArrayPool<char>.Shared.Rent(source.Length);
-        Span<char> buffer = source.Length <= safeBufferSize ? stackalloc char[source.Length] : rented;
-        int charsWritten = 0;
-        for (int indexChar = 0; indexChar < source.Length; ++indexChar)
+        int safeBufferSize = Settings.DefaultSpanBufferSize;
+        if (source.Length > safeBufferSize) rented = ArrayPool<char>.Shared.Rent(source.Length);
+        try
         {
-            char ch = source[indexChar];
-            if ((uint)(ch - '0') <= 9u) buffer[charsWritten++] = ch;
+            Span<char> buffer = source.Length <= safeBufferSize ? stackalloc char[source.Length] : rented;
+            int charsWritten = 0;
+            for (int indexChar = 0; indexChar < source.Length; ++indexChar)
+            {
+                char ch = source[indexChar];
+                if ((uint)(ch - '0') <= 9u) buffer[charsWritten++] = ch;
+            }
+
+            string result = charsWritten == 0 ? string.Empty : new string(buffer[..charsWritten]);
+            return result;
         }
-        string result = charsWritten == 0 ? string.Empty : new string(buffer[..charsWritten]);
-        if (rented is not null) ArrayPool<char>.Shared.Return(rented);
-        return result;
+        finally { if (rented is not null) ArrayPool<char>.Shared.Return(rented); }
     }
 
     /// <summary>
@@ -50,11 +54,9 @@ public static class StringsExtensions
     /// <see cref="string.Empty"/> if the input is null or contains only whitespace.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsBlank([NotNullWhen(false)] this string? source) => 
-        source is null ||
-        string.IsNullOrEmpty(source) || 
-        string.IsNullOrWhiteSpace(source) ||
-        FormatAndValidationHelper.IsVisuallyBlank(source.AsSpan());
+    public static bool IsBlank([NotNullWhen(false)] this string? source) => source is null 
+        || string.IsNullOrEmpty(source) || string.IsNullOrWhiteSpace(source) 
+        || FormatAndValidationHelper.IsVisuallyBlank(source.AsSpan());
 
     /// <summary>
     /// Cleans an arbitrary text by removing unwanted control characters (except CR, LF and TAB),
@@ -72,7 +74,7 @@ public static class StringsExtensions
         if (source is null || source.Length == 0) return string.Empty;
         int sourceLength = source.Length;
         // DefaultSpanBufferSize está definido em bytes.
-        int stackCharacterLimit = LagosystemSettings.DefaultSpanBufferSize / sizeof(char);
+        int stackCharacterLimit = Settings.DefaultSpanBufferSize / sizeof(char);
         char[]? rentedBuffer = null;
         if (sourceLength > stackCharacterLimit) rentedBuffer = ArrayPool<char>.Shared.Rent(sourceLength);
         Span<char> destination = (sourceLength <= stackCharacterLimit) ? stackalloc char[sourceLength] : rentedBuffer.AsSpan(0, sourceLength);
@@ -100,18 +102,21 @@ public static class StringsExtensions
     /// becomes empty after cleaning.
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string CleanToSingleLine(this string source, bool asUpperCase = false, bool noSpaces = true)
+    public static string CleanToSingleLine(this string source, bool asUpperCase = false, bool noSpaces = false)
     {
         if (source.IsBlank())return string.Empty;
         int sourceLength = source.Length;
         char[]? rented = null;
-        int safeBufferSize = LagosystemSettings.DefaultSpanBufferSize;
-        if (sourceLength > safeBufferSize) rented = ArrayPool<char>.Shared.Rent(sourceLength);
-        Span<char> buffer = sourceLength <= safeBufferSize ? stackalloc char[sourceLength] : rented;
-        int written = CleanToSingleLineCore(source, buffer, asUpperCase, noSpaces);
-        string result = written == 0 ? string.Empty : new string(buffer[..written]);
-        if(rented is not null) ArrayPool<char>.Shared.Return(rented);
-        return result;
+        try
+        {
+            int safeBufferSize = Settings.DefaultSpanBufferSize;
+            if (sourceLength > safeBufferSize) rented = ArrayPool<char>.Shared.Rent(sourceLength);
+            Span<char> buffer = sourceLength <= safeBufferSize ? stackalloc char[sourceLength] : rented;
+            int written = CleanToSingleLineCore(source, buffer, asUpperCase, noSpaces);
+            string result = written == 0 ? string.Empty : new string(buffer[..written]);
+            return result;
+        }
+        finally { if(rented is not null) ArrayPool<char>.Shared.Return(rented); }
     }
         
     private static int CleanToSingleLineCore(ReadOnlySpan<char> source, Span<char> destination, bool asUpperCase, bool noSpaces)
@@ -177,20 +182,24 @@ public static class StringsExtensions
         char[]? pooledArray = null;
         // 2. Allocates on the Stack if small (safe limit ~512 chars / 1KB).
         // If it's a huge string (e.g., entire book text), uses the ArrayPool.
-        int safeBufferSize = LagosystemSettings.DefaultSpanBufferSize;
-        if (length > safeBufferSize) pooledArray = ArrayPool<char>.Shared.Rent(length);
-        Span<char> buffer = length <= safeBufferSize ? stackalloc char[length] : pooledArray;
-        int charsWritten = 0;
-        ReadOnlySpan<char> span = normalized.AsSpan();
-        for (int i = 0; i < span.Length; i++)
+        int safeBufferSize = Settings.DefaultSpanBufferSize;
+        try
         {
-            char ch = span[i];
-            if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark) 
-                buffer[charsWritten++] = ch;
+            if (length > safeBufferSize) pooledArray = ArrayPool<char>.Shared.Rent(length);
+            Span<char> buffer = length <= safeBufferSize ? stackalloc char[length] : pooledArray;
+            int charsWritten = 0;
+            ReadOnlySpan<char> span = normalized.AsSpan();
+            for (int i = 0; i < span.Length; i++)
+            {
+                char ch = span[i];
+                if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
+                    buffer[charsWritten++] = ch;
+            }
+
+            string result = new string(buffer[..charsWritten]);
+            return result;
         }
-        string result = new string(buffer[..charsWritten]);
-        if (pooledArray != null) ArrayPool<char>.Shared.Return(pooledArray);
-        return result;
+        finally { if (pooledArray != null) ArrayPool<char>.Shared.Return(pooledArray); }
     }
 
     /// <summary>Left-pads the specified string with zero characters ('0') until it reaches the desired total length, similar to a numeric zero-fill.</summary>
@@ -207,26 +216,25 @@ public static class StringsExtensions
     public static string ZFill(this string source, int totalLength)
     {
         if (source.IsBlank()) return string.Empty;
-        if (totalLength <= 0) return source;
+    
         int sourceLength = source.Length;
         if (sourceLength >= totalLength) return source;
         int zeroCount = totalLength - sourceLength;
-        // TODO: tentar ainda mudar o método abaixo para uma maneira que melhore mais em desempenho.
-        DataZFill dados = new (Source: source, ZeroCount: zeroCount);
-        return string.Create(totalLength, dados, FillData);
-        static void FillData(Span<char> destination, DataZFill state)
+        short maxSizeBuffer = Settings.DefaultSpanBufferSize;
+
+        char[]? rented = null;
+
+        try
         {
-            destination[..state.ZeroCount].Fill('0');
-            state.Source.AsSpan().CopyTo(destination[state.ZeroCount..]);
+            if (totalLength > maxSizeBuffer) rented = ArrayPool<char>.Shared.Rent(totalLength);
+            Span<char> buffer = totalLength <= maxSizeBuffer ? stackalloc char[totalLength] : rented;
+            buffer[..zeroCount].Fill('0');
+            source.AsSpan().CopyTo(buffer.Slice(zeroCount, sourceLength));
+            return new string(buffer[..totalLength]);
         }
+        finally { if (rented is not null) ArrayPool<char>.Shared.Return(rented); }
     }
-
-    private record DataZFill(string Source, int ZeroCount)
-    {
-        public string Source { get; } = Source;
-        public int ZeroCount { get; } = ZeroCount;
-    }
-
+    
     /// <summary>
     /// Returns a safe substring from a <see cref="string"/>, without throwing exceptions,
     /// even when the provided parameters fall outside the expected bounds.
@@ -335,7 +343,7 @@ public static class StringsExtensions
     /// </code>
     /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]    
-    private static ReadOnlySpan<char> SafeSubstring(this ReadOnlySpan<char> span, int startIndex, int length, bool trimSpaces)
+    public static ReadOnlySpan<char> SafeSubstring(this ReadOnlySpan<char> span, int startIndex, int length, bool trimSpaces)
     {
         if (span.IsEmpty || length <= 0)
             return ReadOnlySpan<char>.Empty;
