@@ -108,7 +108,7 @@ namespace Lagosystem.Modules.Validations
             int len1 = str1.Length;
             int len2 = str2.Length;
 
-            int maxStackAlloc = LagosystemSettings.DefaultSpanBufferSize;
+            int maxStackAlloc = Settings.DefaultSpanBufferSize;
             int[]? rentedArray = null;
 
             if (len2 > maxStackAlloc) rentedArray = ArrayPool<int>.Shared.Rent(len2 + 1);
@@ -148,10 +148,7 @@ namespace Lagosystem.Modules.Validations
                 int maxLen = Math.Max(len1, len2);
                 return 1.0 - ((double)distance / maxLen);
             }
-            finally
-            {
-                if (rentedArray != null) ArrayPool<int>.Shared.Return(rentedArray);
-            }
+            finally { if (rentedArray != null) ArrayPool<int>.Shared.Return(rentedArray); }
         }
 
         private static double ComputeJaroWinkler(ReadOnlySpan<char> str1, ReadOnlySpan<char> str2)
@@ -164,7 +161,7 @@ namespace Lagosystem.Modules.Validations
 
             int searchRange = Math.Max(0, Math.Max(len1, len2) / 2 - 1);
 
-            int maxStackAlloc = LagosystemSettings.DefaultSpanBufferSize;
+            int maxStackAlloc = Settings.DefaultSpanBufferSize;
             bool[]? rentedArray1 = null;
             bool[]? rentedArray2 = null;
 
