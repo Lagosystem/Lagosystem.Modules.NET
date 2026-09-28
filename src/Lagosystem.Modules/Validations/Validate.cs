@@ -62,6 +62,8 @@ public static partial class Validate
     /// <exception cref="ArgumentException"></exception>
     public static byte[] GrantNotNullOrEmpty(Stream? value, [InvokerParameterName, LocalizationRequired(false)] string fieldName)
     {
+        try
+        {
         if (value is null) throw new ArgumentNullException(fieldName);
         object syncRoot = StreamLocks.GetValue(value, static _ => new object());
         lock (syncRoot)
@@ -81,6 +83,10 @@ public static partial class Validate
             }
             finally { if (originalPosition.HasValue) value.Position = originalPosition.Value; }
         }
+
+        }
+        catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(GrantNotNullOrEmpty), nameof(Validate)))
+        { throw; }
     }
 
     private static void ValidateNumericValue<T>(T value, [InvokerParameterName, LocalizationRequired(false)] string fieldName, bool allowZero, bool allowNegativeValue) where T : struct

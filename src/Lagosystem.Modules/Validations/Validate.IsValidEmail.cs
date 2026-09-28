@@ -85,7 +85,7 @@ namespace Lagosystem.Modules.Validations
             catch (StackOverflowException) { throw; }
             catch (OutOfMemoryException) { throw; }
             catch (ThreadAbortException) { throw; }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not (ArgumentException or ObjectDisposedException or NullReferenceException or IndexOutOfRangeException or OperationCanceledException))
             {
                 Diagnostics.ReportError(nameof(IsValidEmail), nameof(Validate), ex,
                     "Error validating advanced email rules.");
