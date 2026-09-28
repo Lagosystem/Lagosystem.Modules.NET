@@ -18,6 +18,20 @@ namespace Lagosystem.Modules
     /// </remarks>
     public static class Diagnostics
     {
+        private static readonly ConditionalWeakTable<Exception, object> ReportedOperationalErrors = new();
+
+        /// <summary>Reports environmental failures once; caller mistakes and cancellation are excluded.</summary>
+        internal static bool ReportOperationalFailure(Exception exception, string methodName, string className)
+        {
+            if (exception is not (System.IO.IOException or UnauthorizedAccessException or System.Security.SecurityException or System.Net.Http.HttpRequestException or System.Net.Sockets.SocketException)) return false;
+            lock (ReportedOperationalErrors)
+            {
+                if (ReportedOperationalErrors.TryGetValue(exception, out _)) return true;
+                ReportedOperationalErrors.Add(exception, new object());
+            }
+            ReportError(methodName, className, exception, "An environmental operation failed.");
+            return true;
+        }
         private static OnAnyErrorEventHandle? _onAnyError;
         private static OnAnyWarningEventHandle? _onAnyWarning;
         private static bool _throwInDebugMode = true;
@@ -156,4 +170,5 @@ namespace Lagosystem.Modules
     /// <param name="message">The warning message providing context about the non-critical issue.</param>
     public delegate void OnAnyWarningEventHandle(string methodName, string className, string message);
 }
+
 

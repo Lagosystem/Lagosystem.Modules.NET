@@ -38,6 +38,8 @@ namespace Lagosystem.Modules.Conversions
         /// </exception>
         public static string ToBase64(Stream? stream)
         {
+            try
+            {
             if (stream is null) return string.Empty;
 
             long maxAllowedSize = Settings.MaxBase64StreamSize;
@@ -75,6 +77,12 @@ namespace Lagosystem.Modules.Conversions
                 return Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
             }
             finally { ArrayPool<byte>.Shared.Return(poolBuffer); }
+
+            }
+            catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(ToBase64), nameof(Conversion)))
+            {
+                throw; // Preserve existing API behavior and the original stack.
+            }
         }
         
         /// <summary>
@@ -95,6 +103,8 @@ namespace Lagosystem.Modules.Conversions
         /// </exception>
         public static async Task<string> ToBase64Async(Stream? stream, CancellationToken cancellationToken = default)
         {
+            try
+            {
             if (stream is null) return string.Empty;
             long maxAllowedSize = Settings.MaxBase64StreamSize;
             if (stream.CanSeek)
@@ -123,6 +133,12 @@ namespace Lagosystem.Modules.Conversions
                 return Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
             }
             finally { ArrayPool<byte>.Shared.Return(poolBuffer); }
+
+            }
+            catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(ToBase64Async), nameof(Conversion)))
+            {
+                throw; // Preserve existing API behavior and the original stack.
+            }
         }
         
         
@@ -158,6 +174,8 @@ namespace Lagosystem.Modules.Conversions
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void FromBase64(string? base64, Stream destination)
         {
+            try
+            {
             if (destination is null) throw new ArgumentNullException(nameof(destination));
             if (base64.IsBlank()) return;
             if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
@@ -165,6 +183,12 @@ namespace Lagosystem.Modules.Conversions
                 ThrowHelper.ThrowNowOverlimitBase64Memory(base64.Length);
             byte[] buffer = Convert.FromBase64String(base64);
             destination.Write(buffer, 0, buffer.Length);
+
+            }
+            catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(FromBase64), nameof(Conversion)))
+            {
+                throw; // Preserve existing API behavior and the original stack.
+            }
         }
 
         /// <summary>
@@ -180,6 +204,8 @@ namespace Lagosystem.Modules.Conversions
         /// <exception cref="ArgumentException">Thrown when the decoded payload exceeds the maximum allowed memory limit.</exception>
         public static async Task FromBase64Async(string? base64, Stream destination, CancellationToken cancellationToken = default)
         {
+            try
+            {
             if (destination is null) throw new ArgumentNullException(nameof(destination));
             if (base64.IsBlank()) return;
             if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
@@ -187,6 +213,12 @@ namespace Lagosystem.Modules.Conversions
                 ThrowHelper.ThrowNowOverlimitBase64Memory(base64!.Length);
             byte[] buffer = Convert.FromBase64String(base64);
             await destination.WriteAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+
+            }
+            catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(FromBase64Async), nameof(Conversion)))
+            {
+                throw; // Preserve existing API behavior and the original stack.
+            }
         }
 
         
