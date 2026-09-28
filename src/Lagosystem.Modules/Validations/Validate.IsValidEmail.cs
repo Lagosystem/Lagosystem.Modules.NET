@@ -87,7 +87,7 @@ namespace Lagosystem.Modules.Validations
             catch (ThreadAbortException) { throw; }
             catch (Exception ex)
             {
-                LagosystemModulesDiagnostic.ReportError(nameof(IsValidEmail), nameof(Validate), ex,
+                Diagnostics.ReportError(nameof(IsValidEmail), nameof(Validate), ex,
                     "Error validating advanced email rules.");
                 return false;
             }

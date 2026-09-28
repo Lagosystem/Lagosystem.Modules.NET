@@ -123,7 +123,7 @@ namespace Lagosystem.Modules.Validations
             catch (ThreadAbortException) { throw; }
             catch (Exception ex)
             {
-                LagosystemModulesDiagnostic.ReportError(nameof(IsValidSupplierCode), nameof(Validate), ex, "Error validating supplier code");
+                Diagnostics.ReportError(nameof(IsValidSupplierCode), nameof(Validate), ex, "Error validating supplier code");
                 return false;
             }
         }

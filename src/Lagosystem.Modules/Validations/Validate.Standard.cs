@@ -52,7 +52,7 @@ namespace Lagosystem.Modules.Validations
             catch (ThreadAbortException) { throw; }
             catch (Exception ex)
             {
-                LagosystemModulesDiagnostic.ReportError(nameof(IsValidUrl), nameof(Validate), ex, "Error parsing URL");
+                Diagnostics.ReportError(nameof(IsValidUrl), nameof(Validate), ex, "Error parsing URL");
                 return false;
             }
         }

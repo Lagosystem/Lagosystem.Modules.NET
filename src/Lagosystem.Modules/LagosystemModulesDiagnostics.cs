@@ -16,7 +16,7 @@ namespace Lagosystem.Modules
     /// <remarks>
     /// This class is designed to be thread-safe using <see cref="Volatile"/> operations for reading and writing handlers.
     /// </remarks>
-    public static class LagosystemModulesDiagnostic
+    public static class Diagnostics
     {
         private static OnAnyErrorEventHandle? _onAnyError;
         private static OnAnyWarningEventHandle? _onAnyWarning;
@@ -68,7 +68,7 @@ namespace Lagosystem.Modules
 
             if (callback != null)
                 try { callback.Invoke(methodName, className, exception, message); }
-                catch (Exception ex) { WriteDebugCallbackError(nameof(ReportError), typeof(LagosystemModulesDiagnostic).FullName ?? nameof(LagosystemModulesDiagnostic), ex); }
+                catch (Exception ex) { WriteDebugCallbackError(nameof(ReportError), typeof(Diagnostics).FullName ?? nameof(Diagnostics), ex); }
 
             WriteDebugError(methodName, className, exception, message);
 
@@ -85,7 +85,7 @@ namespace Lagosystem.Modules
             OnAnyWarningEventHandle? callback = Volatile.Read(ref _onAnyWarning);
             if (callback != null)
                 try { callback.Invoke(methodName, className, message); }
-                catch (Exception ex) { WriteDebugCallbackError(nameof(ReportWarning), typeof(LagosystemModulesDiagnostic).FullName ?? nameof(LagosystemModulesDiagnostic), ex); }
+                catch (Exception ex) { WriteDebugCallbackError(nameof(ReportWarning), typeof(Diagnostics).FullName ?? nameof(Diagnostics), ex); }
             WriteDebugWarning(methodName, className, message);
         }
 

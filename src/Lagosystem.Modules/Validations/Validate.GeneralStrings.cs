@@ -48,7 +48,7 @@ namespace Lagosystem.Modules.Validations
             catch (ThreadAbortException) { throw; }
             catch (Exception ex)
             {
-                LagosystemModulesDiagnostic.ReportError(nameof(CalculateStringSimilarity), nameof(Validate), ex,
+                Diagnostics.ReportError(nameof(CalculateStringSimilarity), nameof(Validate), ex,
                     "Error calculating string similarity");
                 return 0.0;
             }
