@@ -51,7 +51,13 @@ namespace Lagosystem.Modules.Conversions
                 if (remainingBytes > maxAllowedSize) ThrowHelper.ThrowBase64StreamSizeLimitExceeded(remainingBytes);
                 
                 byte[] buffer = new byte[remainingBytes];
-                int bytesRead = stream.Read(buffer, 0, (int)remainingBytes);
+                int bytesRead = 0;
+                while (bytesRead < buffer.Length)
+                {
+                    int currentRead = stream.Read(buffer, bytesRead, buffer.Length - bytesRead);
+                    if (currentRead == 0) break;
+                    bytesRead += currentRead;
+                }
                 
                 return Convert.ToBase64String(buffer, 0, bytesRead);
             }
@@ -113,7 +119,14 @@ namespace Lagosystem.Modules.Conversions
                 if (remainingBytes <= 0) return string.Empty;
                 if (remainingBytes > maxAllowedSize) ThrowHelper.ThrowBase64StreamSizeLimitExceeded(remainingBytes);
                 byte[] buffer = new byte[remainingBytes];
-                int bytesRead = await stream.ReadAsync(buffer, 0, (int)remainingBytes, cancellationToken).ConfigureAwait(false);
+                int bytesRead = 0;
+                while (bytesRead < buffer.Length)
+                {
+                    int currentRead = await stream.ReadAsync(buffer, bytesRead, buffer.Length - bytesRead,
+                        cancellationToken).ConfigureAwait(false);
+                    if (currentRead == 0) break;
+                    bytesRead += currentRead;
+                }
                 return Convert.ToBase64String(buffer, 0, bytesRead);
             }
             
