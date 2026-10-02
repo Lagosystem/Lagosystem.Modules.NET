@@ -1,8 +1,10 @@
 using System.Globalization;
 using Lagosystem.Modules;
+using Xunit.Sdk;
+using Xunit.v3;
 
 // Settings e callbacks de diagnóstico pertencem ao processo inteiro.
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: Parallelization(Mode = ParallelMode.None)]
 
 namespace Lagosystem.Modules.Tests;
 
