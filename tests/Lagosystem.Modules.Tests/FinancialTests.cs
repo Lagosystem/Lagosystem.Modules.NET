@@ -24,7 +24,7 @@ public sealed class FinancialTests
         Assert.Equal(200m, Financials.CalculateSimpleInterest(1000m, 10m, 2m));
         Assert.Equal(12.35m, Financials.ConvertToPercentage(0.12345m, 2));
         Assert.Equal(50m, Financials.ConvertCurrency(10m, 5m));
-        Assert.Equal(10m, Financials.ConvertCurrency(50m, 5m, inverse: true));
+        Assert.Equal(10m, Financials.ConvertCurrency(50m, 5m, true));
         Assert.Equal(1.01m, Financials.RoundMonetaryAmount(1.005m));
         Assert.Equal(-1.01m, Financials.RoundMonetaryAmount(-1.005m));
         Assert.Equal(1.00m, Financials.RoundMonetaryAmount(1.005m, rounding: MidpointRounding.ToEven));

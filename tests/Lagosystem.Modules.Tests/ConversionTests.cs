@@ -33,7 +33,7 @@ public sealed class ConversionTests : ModuleTestScope
         using ChunkedStream stream = new ChunkedStream(input, canSeek, chunkSize);
         stream.Position = 8;
 
-        string actual = await Conversion.ToBase64Async(stream);
+        string actual = await Conversion.ToBase64Async(stream, TestContext.Current.CancellationToken);
 
         Assert.Equal(Convert.ToBase64String(input, 8, input.Length - 8), actual);
         Assert.Equal(input.Length, stream.Position);
@@ -51,7 +51,7 @@ public sealed class ConversionTests : ModuleTestScope
         Conversion.FromBase64(encoded, destination);
         Assert.Equal(input, destination.ToArray());
         destination.SetLength(0);
-        await Conversion.FromBase64Async(encoded, destination);
+        await Conversion.FromBase64Async(encoded, destination, TestContext.Current.CancellationToken);
         Assert.Equal(input, destination.ToArray());
     }
 
@@ -60,7 +60,7 @@ public sealed class ConversionTests : ModuleTestScope
     {
         Assert.Equal(string.Empty, Conversion.ToBase64((byte[]?)null));
         Assert.Equal(string.Empty, Conversion.ToBase64((Stream?)null));
-        Assert.Equal(string.Empty, await Conversion.ToBase64Async(null));
+        Assert.Equal(string.Empty, await Conversion.ToBase64Async(null, TestContext.Current.CancellationToken));
         Assert.Empty(Conversion.FromBase64(null));
         using MemoryStream stream = new MemoryStream();
         Assert.Equal(string.Empty, Conversion.ToBase64(stream));
