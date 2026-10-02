@@ -184,6 +184,10 @@ public static partial class Financials
         {
             decimal cashFlow = cashFlows[index];
             negativePresentValue = negativePresentValue * financeDiscount + (cashFlow < 0m ? cashFlow : 0m);
+        }
+        // Fluxos positivos são capitalizados até o último período, em ordem cronológica.
+        foreach (decimal cashFlow in cashFlows)
+        {
             positiveFutureValue = positiveFutureValue * reinvestmentGrowth + (cashFlow > 0m ? cashFlow : 0m);
         }
         if (negativePresentValue == 0m) ThrowHelper.ThrowDividedByZeroCalculated();
@@ -475,4 +479,3 @@ public static partial class Financials
         return new FinancialCalculationResult(CheckedDecimal(percentage), CheckedDecimal(error), iterations, residual);
     }
 }
-

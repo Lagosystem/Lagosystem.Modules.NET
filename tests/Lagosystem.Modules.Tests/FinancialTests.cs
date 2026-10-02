@@ -108,6 +108,15 @@ public sealed class FinancialTests
     }
 
     [Fact]
+    public void ModifiedInternalRateDiscountsNegativesAndReinvestsPositives()
+    {
+        AssertClose(7.238052947636m, Financials.CalculateModifiedInternalRateOfReturn(
+            new decimal[] { -100m, 50m, 60m }, 5m, 10m));
+        AssertClose(10m, Financials.CalculateModifiedInternalRateOfReturn(
+            new decimal[] { -100m, -110m, 242m }, 10m, 10m));
+    }
+
+    [Fact]
     public void DatedCashFlowsUseActualDaysWith365DayYear()
     {
         decimal[] cashFlows = new decimal[] { -100m, 110m };

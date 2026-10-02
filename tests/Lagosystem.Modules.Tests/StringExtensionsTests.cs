@@ -21,7 +21,6 @@ public sealed class StringExtensionsTests : ModuleTestScope
     [InlineData("", true)]
     [InlineData(" \t\r\n", true)]
     [InlineData("\u200B\uFEFF\u200D", true)]
-    [InlineData("\uD800", true)]
     [InlineData("\uFE0F", true)]
     [InlineData("0", false)]
     [InlineData("👩‍💻", false)]
@@ -37,12 +36,26 @@ public sealed class StringExtensionsTests : ModuleTestScope
     [InlineData("  café\t com\r\nleite  ", "CAFÉ COM LEITE")]
     [InlineData("\uFEFFa\u200Bb\0c\u007F", "ABC")]
     [InlineData("a\u00A0b\u2028c", "A B C")]
-    [InlineData("a\uD800b\uDC00c", "ABC")]
     [InlineData("👩‍💻 café", "👩‍💻 CAFÉ")]
     public void CleanNormalizesWhitespaceAndPreservesVisibleUnicode(string? input, string expected)
     {
         Assert.Equal(expected, input.Clean());
         Assert.Equal(expected, expected.Clean());
+    }
+
+    [Fact]
+    public void IsBlankIgnoresUnpairedSurrogates()
+    {
+        // Atributos serializam strings como UTF-8 e não preservam UTF-16 inválido.
+        string invalid = new string(new char[] { (char)0xD800 });
+        Assert.True(invalid.IsBlank());
+    }
+
+    [Fact]
+    public void CleanRemovesUnpairedSurrogatesAtRuntime()
+    {
+        string invalid = new string(new char[] { 'a', (char)0xD800, 'b', (char)0xDC00, 'c' });
+        Assert.Equal("ABC", invalid.Clean());
     }
 
     [Theory]
