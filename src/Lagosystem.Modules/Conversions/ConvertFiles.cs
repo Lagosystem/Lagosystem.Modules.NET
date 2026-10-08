@@ -40,49 +40,49 @@ namespace Lagosystem.Modules.Conversions
         {
             try
             {
-            if (stream is null) return string.Empty;
+                if (stream is null) return string.Empty;
 
-            long maxAllowedSize = Settings.MaxBase64StreamSize;
-            if (stream.CanSeek)
-            {
-                long remainingBytes = stream.Length - stream.Position;
-                if (remainingBytes <= 0) return string.Empty;
-                
-                if (remainingBytes > maxAllowedSize) ThrowHelper.ThrowBase64StreamSizeLimitExceeded(remainingBytes);
-                
-                byte[] buffer = new byte[remainingBytes];
-                int bytesRead = 0;
-                while (bytesRead < buffer.Length)
+                long maxAllowedSize = Settings.MaxBase64StreamSize;
+                if (stream.CanSeek)
                 {
-                    int currentRead = stream.Read(buffer, bytesRead, buffer.Length - bytesRead);
-                    if (currentRead == 0) break;
-                    bytesRead += currentRead;
-                }
+                    long remainingBytes = stream.Length - stream.Position;
+                    if (remainingBytes <= 0) return string.Empty;
                 
-                return Convert.ToBase64String(buffer, 0, bytesRead);
-            }
-            using MemoryStream ms = new MemoryStream();
-            byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(Settings.DefaultStreamBufferSize);
+                    if (remainingBytes > maxAllowedSize) ThrowHelper.ThrowBase64StreamSizeLimitExceeded(remainingBytes);
+                
+                    byte[] buffer = new byte[remainingBytes];
+                    int bytesRead = 0;
+                    while (bytesRead < buffer.Length)
+                    {
+                        int currentRead = stream.Read(buffer, bytesRead, buffer.Length - bytesRead);
+                        if (currentRead == 0) break;
+                        bytesRead += currentRead;
+                    }
+                
+                    return Convert.ToBase64String(buffer, 0, bytesRead);
+                }
+                using MemoryStream ms = new MemoryStream();
+                byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(Settings.DefaultStreamBufferSize);
             
-            try
-            {
-                int read;
-                long totalRead = 0;
-                    
-                while ((read = stream.Read(poolBuffer, 0, poolBuffer.Length)) > 0)
+                try
                 {
-                    totalRead += read;
-                    if (totalRead > maxAllowedSize) ThrowHelper.ThrowBase64StreamLimitExceeded(totalRead);
-                    ms.Write(poolBuffer, 0, read);
-                }
-
-                if (ms.Length == 0) return string.Empty;
+                    int read;
+                    long totalRead = 0;
                     
-                // GetBuffer() is used here instead of ToArray() to avoid creating a duplicated 
-                // byte array just for the conversion process. Highly memory-efficient.
-                return Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
-            }
-            finally { ArrayPool<byte>.Shared.Return(poolBuffer); }
+                    while ((read = stream.Read(poolBuffer, 0, poolBuffer.Length)) > 0)
+                    {
+                        totalRead += read;
+                        if (totalRead > maxAllowedSize) ThrowHelper.ThrowBase64StreamLimitExceeded(totalRead);
+                        ms.Write(poolBuffer, 0, read);
+                    }
+
+                    if (ms.Length == 0) return string.Empty;
+                    
+                    // GetBuffer() is used here instead of ToArray() to avoid creating a duplicated 
+                    // byte array just for the conversion process. Highly memory-efficient.
+                    return Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
+                }
+                finally { ArrayPool<byte>.Shared.Return(poolBuffer); }
 
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(ToBase64), nameof(Conversion)))
