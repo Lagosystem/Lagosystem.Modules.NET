@@ -44,15 +44,22 @@ public static class StringsExtensions
     }
 
     /// <summary>
-    /// Cleans an arbitrary text by removing unwanted control characters (except CR, LF and TAB),
-    /// stripping BOM/zero-width characters, normalizing different whitespace characters to a single
-    /// space and collapsing consecutive spaces. The result is then trimmed at the start and end.
+    /// Determines whether a string is null, empty, consists only of whitespace,
+    /// or has no visually meaningful characters according to the library's
+    /// Unicode classification.
     /// </summary>
-    /// <param name="source">The original text to clean.</param>
+    /// <param name="source">The text to inspect, including a possible null value.</param>
     /// <returns>
-    /// A normalized string with control and invisible characters removed, or
-    /// <see cref="string.Empty"/> if the input is null or contains only whitespace.
+    /// <see langword="true"/> when the input has no visible content;
+    /// otherwise <see langword="false"/>.
     /// </returns>
+    /// <remarks>
+    /// Valid visible characters in emoji sequences keep the input nonblank.
+    /// Isolated controls, invisible formatting characters and malformed
+    /// UTF-16 surrogate code units do not count as visible content.
+    /// The PostgreSQL translation registered in the API is an approximation:
+    /// SQL does not replicate the .NET Unicode classification exactly.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsBlank([NotNullWhen(false)] this string? source) => source is null 
         || string.IsNullOrEmpty(source) || string.IsNullOrWhiteSpace(source) 
