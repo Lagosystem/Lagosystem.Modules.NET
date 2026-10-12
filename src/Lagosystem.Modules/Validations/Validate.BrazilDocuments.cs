@@ -9,7 +9,7 @@ namespace Lagosystem.Modules.Validations
 
     public static partial class Validate
     {
-        #region Brazil Documents (CPF, CNPJ, PIS, CNH)
+        #region Brazil Documents (CPF, CNPJ, PIS, CNH, others documents)
 
         /// <summary>
         /// Validates a Brazilian CPF (Cadastro de Pessoas Físicas) number.
@@ -209,21 +209,143 @@ namespace Lagosystem.Modules.Validations
             verifier1 = verifier1 <= 9 ? verifier1 : 0;
             return verifier0 == (buffer[9] - '0') && verifier1 == (buffer[10] - '0');
         }
-
+        
         /// <summary>
         /// Validates a SUFRAMA (Superintendência da Zona Franca de Manaus) registration number.
-        /// (Currently Not Implemented).
+        /// It ignores formatting characters and expects exactly 9 numeric digits validated via Module 11.
+        /// </summary>
+        /// <param name="suframaInsc">A <see cref="string"/> representing the SUFRAMA registration to validate.</param>
+        /// <returns><see langword="true"/> if the SUFRAMA registration is valid; otherwise, <see langword="false"/>.</returns>
+        public static bool IsSuframa(string? suframaInsc) => !suframaInsc.IsBlank() && IsSuframa(suframaInsc.AsSpan());
+        
+        /// <summary>
+        /// Validates a SUFRAMA (Superintendência da Zona Franca de Manaus) registration number.
+        /// It ignores formatting characters and expects exactly 9 numeric digits validated via Module 11.
         /// </summary>
         /// <param name="suframaInsc">A read-only span of characters representing the SUFRAMA registration to validate.</param>
         /// <returns><see langword="true"/> if the SUFRAMA registration is valid; otherwise, <see langword="false"/>.</returns>
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
-        [Obsolete("Method will be implemented.")]
-        private static bool IsSuframa(ReadOnlySpan<char> suframaInsc)
+        public static bool IsSuframa(ReadOnlySpan<char> suframaInsc)
         {
-            throw new NotImplementedException();
+            if (suframaInsc.IsEmpty) return false;
+
+            int sum = 0;
+            int weight = 9;
+            int count = 0;
+            int actualDigit = -1;
+
+            // Itera pela span uma única vez (O(N)), ignorando pontuações automaticamente.
+            for (int i = 0; i < suframaInsc.Length; i++)
+            {
+                // Mágica de alta performance: se o char for um ponto (.), hífen (-) ou letra, 
+                // a subtração por '0' resultará num número negativo. Como convertemos para uint,
+                // ocorre o "underflow" e ele vira um número gigantesco (> 9), falhando no if abaixo
+                // com custo zero (sem chamar char.IsDigit).
+                uint c = (uint)(suframaInsc[i] - '0');
+
+                if (c > 9) continue;
+                count++;
+                switch (count)
+                {
+                    case < 9:
+                        sum += (int)c * weight;
+                        weight--;
+                        break;
+                    case 9:
+                        actualDigit = (int)c;
+                        break;
+                    default:
+                        return false; // Mais de 9 dígitos numéricos torna a inscrição automaticamente inválida.
+                }
+            }
+            
+            if (count != 9) return false; // Se após filtrar tudo não tivermos exatamente 9 números, é inválido.
+
+            // Cálculo do dígito pelo Módulo 11
+            int remainder = sum % 11;
+            int expectedDigit = remainder < 2 ? 0 : 11 - remainder;
+
+            return actualDigit == expectedDigit;
         }
 
-        
+        /// <summary>
+        /// Validates a Brazilian Voter Registration Card (Título de Eleitor).
+        /// It ignores formatting characters and expects exactly 12 numeric digits.
+        /// Uses the Module 11 validation rules specified by the TSE (Tribunal Superior Eleitoral).
+        /// </summary>
+        /// <param name="tituloEleitor">A string representing the Voter Registration Card to validate.</param>
+        /// <returns><see langword="true"/> if the registration number is valid; otherwise, <see langword="false"/>.</returns>
+        public static bool IsTituloEleitor(string? tituloEleitor) => !tituloEleitor.IsBlank() && IsTituloEleitor(tituloEleitor.AsSpan()); 
+
+        /// <summary>
+        /// Validates a Brazilian Voter Registration Card (Título de Eleitor).
+        /// It ignores formatting characters and expects exactly 12 numeric digits.
+        /// Uses the Module 11 validation rules specified by the TSE (Tribunal Superior Eleitoral).
+        /// </summary>
+        /// <param name="tituloEleitor">A read-only span of characters representing the Voter Registration Card to validate.</param>
+        /// <returns><see langword="true"/> if the registration number is valid; otherwise, <see langword="false"/>.</returns>
+        public static bool IsTituloEleitor(ReadOnlySpan<char> tituloEleitor)
+        {
+            if (tituloEleitor.IsEmpty) return false;
+
+            // 48 bytes na stack. Zero impacto no Garbage Collector.
+            Span<int> digits = stackalloc int[12];
+            int count = 0;
+            bool allIdentical = true;
+
+            // Loop de varredura única (O(N)) para ignorar formatação e extrair números
+            for (int i = 0; i < tituloEleitor.Length; i++)
+            {
+                // Mesma mágica de Branchless Cast usada no SUFRAMA
+                uint c = (uint)(tituloEleitor[i] - '0');
+                if (c > 9) continue;
+                if (count == 12) return false; // Mais de 12 números invalida o documento
+                digits[count] = (int)c;
+
+                // Checa se todos os números são iguais (ex: "000000000000")
+                if (count > 0 && digits[count] != digits[count - 1])
+                    allIdentical = false;
+
+                count++;
+            }
+
+            // Título de Eleitor precisa ter exatos 12 dígitos e não pode ser uma sequência repetida
+            if (count != 12 || allIdentical) return false;
+
+            // Os dígitos 9 e 10 (índices 8 e 9) representam o código da UF (Estado)
+            int uf = digits[8] * 10 + digits[9];
+
+            // Códigos válidos de UF vão de 01 a 28 (28 representa eleitores no Exterior)
+            if (uf is < 1 or > 28) return false;
+
+            // --- Cálculo do Primeiro Dígito Verificador (DV1) ---
+            // Pesos aplicados: 2, 3, 4, 5, 6, 7, 8, 9
+            int sum1 = digits[0] * 2 + digits[1] * 3 + digits[2] * 4 + digits[3] * 5 +
+                       digits[4] * 6 + digits[5] * 7 + digits[6] * 8 + digits[7] * 9;
+
+            int rem1 = sum1 % 11;
+            rem1 = rem1 switch
+            {
+                10 => 0,
+                0 when uf is 1 or 2 => 1,
+                var _ => rem1
+            };
+
+            if (digits[10] != rem1) return false;
+
+            // --- Cálculo do Segundo Dígito Verificador (DV2) ---
+            // Pesos aplicados: 7, 8, 9 (O cálculo usa os dois dígitos da UF e o DV1)
+            int sum2 = digits[8] * 7 + digits[9] * 8 + digits[10] * 9;
+
+            int rem2 = sum2 % 11;
+            rem2 = rem2 switch
+            {
+                10 => 0,
+                0 when uf is 1 or 2 => 1,
+                var _ => rem2
+            };
+
+            return digits[11] == rem2;
+        }
 
 
         #endregion

@@ -15,15 +15,16 @@ using Lagosystem.Modules.Extensions;
 public static partial class Validate
 {
     /// <summary>
-    /// 
+    /// Ensures that a nullable value type is not null and optionally validates numeric constraints.
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="fieldName"></param>
-    /// <param name="allowZero"></param>
-    /// <param name="allowNegativeValue"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="value">The nullable value to check.</param>
+    /// <param name="fieldName">The name of the field or parameter being validated, used in exception messages.</param>
+    /// <param name="allowZero">If <see langword="false"/>, throws an exception if the unwrapped numeric value is zero. Defaults to <see langword="true"/>.</param>
+    /// <param name="allowNegativeValue">If <see langword="false"/>, throws an exception if the unwrapped numeric value is negative. Defaults to <see langword="true"/>.</param>
+    /// <typeparam name="T">The underlying value type.</typeparam>
+    /// <returns>The unwrapped, non-null value.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if the value violates the zero or negative constraints.</exception>
     public static T GrantNotNull<T>(T? value, [InvokerParameterName, LocalizationRequired(false)] string fieldName, bool allowZero = true, bool allowNegativeValue = true) where T : struct
     {
         if (!value.HasValue) throw new ArgumentNullException(fieldName);
@@ -34,17 +35,24 @@ public static partial class Validate
     }
 
     /// <summary>
-    /// 
+    /// Ensures that a string is neither null, empty, nor consists only of white-space characters.
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="fieldName"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
+    /// <param name="value">The string value to check.</param>
+    /// <param name="fieldName">The name of the field or parameter being validated, used in exception messages.</param>
+    /// <returns>The valid, non-blank string.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is null, empty, or white-space.</exception>
     public static string GrantNotNullOrEmpty(string? value, [InvokerParameterName, LocalizationRequired(false)] string fieldName) => 
         value.IsBlank() 
             ? throw new ArgumentNullException(fieldName) 
-            : value!;
+            : value;
 
+    /// <summary>
+    /// Ensures that a string is neither null, empty, nor consists only of white-space characters.
+    /// </summary>
+    /// <param name="value">The string value to check.</param>
+    /// <param name="fieldName">The name of the field or parameter being validated, used in exception messages.</param>
+    /// <returns>The valid, non-blank string.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is null, empty, or white-space.</exception>
     public static byte[] GrantNotNullOrEmpty(byte[]? value, [InvokerParameterName, LocalizationRequired(false)] string fieldName) =>
         (value is not null)
             ? (value.Length == 0 ? throw new ArgumentException($"The field '{fieldName}' cannot be empty.", fieldName) : value)
@@ -53,36 +61,37 @@ public static partial class Validate
     private static readonly ConditionalWeakTable<Stream, object> StreamLocks = new();
 
     /// <summary>
-    /// 
+    /// Ensures that a stream is not null, can be read, is not empty, and safely extracts its content as a byte array.
+    /// Uses lock synchronization to handle concurrent reads on the same stream instance.
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="fieldName"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="ArgumentException"></exception>
+    /// <param name="value">The stream to read and validate.</param>
+    /// <param name="fieldName">The name of the field or parameter being validated, used in exception messages.</param>
+    /// <returns>A byte array containing the stream's data.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown if the stream cannot be read or is empty.</exception>
     public static byte[] GrantNotNullOrEmpty(Stream? value, [InvokerParameterName, LocalizationRequired(false)] string fieldName)
     {
         try
         {
-        if (value is null) throw new ArgumentNullException(fieldName);
-        object syncRoot = StreamLocks.GetValue(value, static _ => new object());
-        lock (syncRoot)
-        {
-            if (!value.CanRead) throw new ArgumentException($"The stream from field '{fieldName}' cannot be read.", fieldName);
-            long? originalPosition = value.CanSeek ? value.Position : null;
-            try
+            if (value is null) throw new ArgumentNullException(fieldName);
+            object syncRoot = StreamLocks.GetValue(value, static _ => new object());
+            lock (syncRoot)
             {
-                if (value.CanSeek)
+                if (!value.CanRead) throw new ArgumentException($"The stream from field '{fieldName}' cannot be read.", fieldName);
+                long? originalPosition = value.CanSeek ? value.Position : null;
+                try
                 {
-                    if (value.Length == 0) throw new ArgumentException($"The field '{fieldName}' cannot be empty.", fieldName);
-                    value.Position = 0;
+                    if (value.CanSeek)
+                    {
+                        if (value.Length == 0) throw new ArgumentException($"The field '{fieldName}' cannot be empty.", fieldName);
+                        value.Position = 0;
+                    }
+                    using MemoryStream destination = new();
+                    value.CopyTo(destination);
+                    return destination.Length == 0 ? throw new ArgumentException($"The field '{fieldName}' cannot contain an empty stream.", fieldName) : destination.ToArray();
                 }
-                using MemoryStream destination = new();
-                value.CopyTo(destination);
-                return destination.Length == 0 ? throw new ArgumentException($"The field '{fieldName}' cannot contain an empty stream.", fieldName) : destination.ToArray();
+                finally { if (originalPosition.HasValue) value.Position = originalPosition.Value; }
             }
-            finally { if (originalPosition.HasValue) value.Position = originalPosition.Value; }
-        }
 
         }
         catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(GrantNotNullOrEmpty), nameof(Validate)))
@@ -117,33 +126,37 @@ public static partial class Validate
     }
 
     /// <summary>
-    /// 
+    /// Determines whether the specified string is a valid Regular Expression pattern.
     /// </summary>
-    /// <param name="regex"></param>
-    /// <returns></returns>
+    /// <param name="regex">The string pattern to validate.</param>
+    /// <returns>
+    /// <see langword="true"/> if the string is a valid regex pattern and can be compiled; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsValidRegexInput(string? regex)
     {
         if (regex.IsBlank()) return false;
         try
         {
-            _ = new Regex(regex!, RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
+            _ = new Regex(regex, RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
             return true;
         }
         catch (ArgumentException) { return false; }
     }
     
     /// <summary>
-    /// 
+    /// Determines whether the specified string represents a valid, specific (non-neutral) culture.
     /// </summary>
-    /// <param name="culture"></param>
-    /// <returns></returns>
+    /// <param name="culture">The culture name to validate (e.g., "en-US", "pt-BR").</param>
+    /// <returns>
+    /// <see langword="true"/> if the culture name is valid and represents a specific country/region; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool IsValidSpecificCulture(string? culture)
     {
         if (culture.IsBlank()) return false; 
         try
         {
             CultureInfo cultureInfo = CultureInfo.GetCultureInfo(culture!);
-            return !cultureInfo.IsNeutralCulture && cultureInfo != CultureInfo.InvariantCulture;
+            return !cultureInfo.IsNeutralCulture && !Equals(cultureInfo, CultureInfo.InvariantCulture);
         }
         catch (CultureNotFoundException) { return false; }
     }
