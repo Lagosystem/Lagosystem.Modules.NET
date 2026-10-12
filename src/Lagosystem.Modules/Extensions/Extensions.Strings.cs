@@ -4,6 +4,7 @@ namespace Lagosystem.Modules.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
 using Lagosystem.Modules.Memory;
+using System.Diagnostics.Contracts;
 
 using System.Buffers;
 using Lagosystem.Modules.Helpers;
@@ -60,6 +61,7 @@ public static class StringsExtensions
     /// The PostgreSQL translation registered in the API is an approximation:
     /// SQL does not replicate the .NET Unicode classification exactly.
     /// </remarks>
+    [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsBlank([NotNullWhen(false)] this string? source) => source is null 
         || string.IsNullOrEmpty(source) || string.IsNullOrWhiteSpace(source) 
