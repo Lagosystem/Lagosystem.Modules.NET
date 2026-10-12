@@ -391,5 +391,8 @@ internal static class FormatAndValidationHelper
 
         return true;
     }
+    
+    internal static string GetNameMethodWhoCalled(Type @class, [CallerMemberName] string callerName = "") => 
+        $"global::{@class.FullName}.{callerName}";
 }
 
