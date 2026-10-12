@@ -76,18 +76,18 @@ namespace Lagosystem.Modules.Conversions
                         ms.Write(poolBuffer, 0, read);
                     }
 
-                    if (ms.Length == 0) return string.Empty;
-                    
-                    // GetBuffer() is used here instead of ToArray() to avoid creating a duplicated 
-                    // byte array just for the conversion process. Highly memory-efficient.
-                    return Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
+                    return ms.Length == 0 ? string.Empty :
+                        // GetBuffer() is used here instead of ToArray() to avoid creating a duplicated 
+                        // byte array just for the conversion process. Highly memory-efficient.
+                        Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
                 }
                 finally { ArrayPool<byte>.Shared.Return(poolBuffer); }
 
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(ToBase64), nameof(Conversion)))
             {
-                throw; // Preserve existing API behavior and the original stack.
+                if (Diagnostics.ThrowInDebugMode && System.Diagnostics.Debugger.IsAttached) throw;
+                return string.Empty;
             }
         }
         
@@ -111,46 +111,47 @@ namespace Lagosystem.Modules.Conversions
         {
             try
             {
-            if (stream is null) return string.Empty;
-            long maxAllowedSize = Settings.MaxBase64StreamSize;
-            if (stream.CanSeek)
-            {
-                long remainingBytes = stream.Length - stream.Position;
-                if (remainingBytes <= 0) return string.Empty;
-                if (remainingBytes > maxAllowedSize) ThrowHelper.ThrowBase64StreamSizeLimitExceeded(remainingBytes);
-                byte[] buffer = new byte[remainingBytes];
-                int bytesRead = 0;
-                while (bytesRead < buffer.Length)
+                if (stream is null) return string.Empty;
+                long maxAllowedSize = Settings.MaxBase64StreamSize;
+                if (stream.CanSeek)
                 {
-                    int currentRead = await stream.ReadAsync(buffer, bytesRead, buffer.Length - bytesRead,
-                        cancellationToken).ConfigureAwait(false);
-                    if (currentRead == 0) break;
-                    bytesRead += currentRead;
+                    long remainingBytes = stream.Length - stream.Position;
+                    if (remainingBytes <= 0) return string.Empty;
+                    if (remainingBytes > maxAllowedSize) ThrowHelper.ThrowBase64StreamSizeLimitExceeded(remainingBytes);
+                    byte[] buffer = new byte[remainingBytes];
+                    int bytesRead = 0;
+                    while (bytesRead < buffer.Length)
+                    {
+                        int currentRead = await stream.ReadAsync(buffer, bytesRead, buffer.Length - bytesRead,
+                            cancellationToken).ConfigureAwait(false);
+                        if (currentRead == 0) break;
+                        bytesRead += currentRead;
+                    }
+                    return Convert.ToBase64String(buffer, 0, bytesRead);
                 }
-                return Convert.ToBase64String(buffer, 0, bytesRead);
-            }
             
-            using MemoryStream ms = new();
-            byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(Settings.DefaultStreamBufferSize);
-            try
-            {
-                int read;
-                long totalRead = 0;
-                while ((read = await stream.ReadAsync(poolBuffer, 0, poolBuffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+                using MemoryStream ms = new();
+                byte[] poolBuffer = ArrayPool<byte>.Shared.Rent(Settings.DefaultStreamBufferSize);
+                try
                 {
-                    totalRead += read;
-                    if (totalRead > maxAllowedSize) ThrowHelper.ThrowBase64StreamLimitExceeded(totalRead);
-                    ms.Write(poolBuffer, 0, read);
+                    int read;
+                    long totalRead = 0;
+                    while ((read = await stream.ReadAsync(poolBuffer, 0, poolBuffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+                    {
+                        totalRead += read;
+                        if (totalRead > maxAllowedSize) ThrowHelper.ThrowBase64StreamLimitExceeded(totalRead);
+                        ms.Write(poolBuffer, 0, read);
+                    }
+                    return ms.Length == 0 ? string.Empty : 
+                        Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
                 }
-                if (ms.Length == 0) return string.Empty;
-                return Convert.ToBase64String(ms.GetBuffer(), 0, (int)ms.Length);
-            }
-            finally { ArrayPool<byte>.Shared.Return(poolBuffer); }
+                finally { ArrayPool<byte>.Shared.Return(poolBuffer); }
 
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(ToBase64Async), nameof(Conversion)))
             {
-                throw; // Preserve existing API behavior and the original stack.
+                if (Diagnostics.ThrowInDebugMode && System.Diagnostics.Debugger.IsAttached) throw;
+                return string.Empty;
             }
         }
         
@@ -170,7 +171,7 @@ namespace Lagosystem.Modules.Conversions
         {
             if (base64.IsBlank()) return Array.Empty<byte>();
             if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
-            if ((((long)base64!.Length * 3) / 4) > Settings.MaxBase64StreamSize) 
+            if ((long)base64.Length * 3 / 4 > Settings.MaxBase64StreamSize) 
                 ThrowHelper.ThrowNowOverlimitBase64Memory(base64.Length);
             return Convert.FromBase64String(base64);
         }
@@ -189,18 +190,18 @@ namespace Lagosystem.Modules.Conversions
         {
             try
             {
-            if (destination is null) throw new ArgumentNullException(nameof(destination));
-            if (base64.IsBlank()) return;
-            if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
-            if ((((long)base64!.Length * 3) / 4) > Settings.MaxBase64StreamSize) 
-                ThrowHelper.ThrowNowOverlimitBase64Memory(base64.Length);
-            byte[] buffer = Convert.FromBase64String(base64);
-            destination.Write(buffer, 0, buffer.Length);
+                if (destination is null) throw new ArgumentNullException(nameof(destination));
+                if (base64.IsBlank()) return;
+                if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
+                if ((((long)base64!.Length * 3) / 4) > Settings.MaxBase64StreamSize) 
+                    ThrowHelper.ThrowNowOverlimitBase64Memory(base64.Length);
+                byte[] buffer = Convert.FromBase64String(base64);
+                destination.Write(buffer, 0, buffer.Length);
 
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(FromBase64), nameof(Conversion)))
             {
-                throw; // Preserve existing API behavior and the original stack.
+                if (Diagnostics.ThrowInDebugMode && System.Diagnostics.Debugger.IsAttached) throw;
             }
         }
 
@@ -219,18 +220,18 @@ namespace Lagosystem.Modules.Conversions
         {
             try
             {
-            if (destination is null) throw new ArgumentNullException(nameof(destination));
-            if (base64.IsBlank()) return;
-            if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
-            if ((((long)base64!.Length * 3) / 4) > Settings.MaxBase64StreamSize) 
-                ThrowHelper.ThrowNowOverlimitBase64Memory(base64!.Length);
-            byte[] buffer = Convert.FromBase64String(base64);
-            await destination.WriteAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
+                if (destination is null) throw new ArgumentNullException(nameof(destination));
+                if (base64.IsBlank()) return;
+                if (!Validate.IsValidBase64(base64)) ThrowHelper.ThrowNowInvalidBase64();
+                if ((long)base64!.Length * 3 / 4 > Settings.MaxBase64StreamSize) 
+                    ThrowHelper.ThrowNowOverlimitBase64Memory(base64!.Length);
+                byte[] buffer = Convert.FromBase64String(base64);
+                await destination.WriteAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false);
 
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(FromBase64Async), nameof(Conversion)))
             {
-                throw; // Preserve existing API behavior and the original stack.
+                if (Diagnostics.ThrowInDebugMode && System.Diagnostics.Debugger.IsAttached) throw;
             }
         }
 
