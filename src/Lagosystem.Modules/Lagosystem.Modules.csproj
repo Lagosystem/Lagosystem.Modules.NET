@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>Lagosystem</PackageId>
-    <Authors>Leonardo Nicolas</Authors>
+    <Authors>Lagosystem Foundation</Authors>
     <Description>Modules, functions and others</Description>
     <Company>Lagosystem</Company>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -13,6 +13,35 @@
     <RootNamespace>Lagosystem.Modules</RootNamespace>
     <LangVersion>11</LangVersion>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <!-- NuGet Package Metadata -->
+    <PackageId>Lagosystem.Modules</PackageId>
+    <Title>Lagosystem.Modules</Title>
+    <Authors>Lagosystem Foundation</Authors>
+    <Description>Open-source .NET library providing reusable modules, extensions, helpers, and utilities for modern applications.</Description>
+    <PackageTags>lagosystem;modules;extensions;utilities;helpers;dotnet;opensource</PackageTags>
+
+    <!-- Licensing -->
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+
+    <!-- Repository -->
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/leonardo-nicolas/SEU-REPOSITORIO</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/leonardo-nicolas/SEU-REPOSITORIO</PackageProjectUrl>
+
+    <!-- Branding -->
+    <PackageIcon>6fa00a3b-9673-4ae6-af59-267f00dc5825.png</PackageIcon>
+
+    <!-- Source Information -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Assets\6fa00a3b-9673-4ae6-af59-267f00dc5825.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
    <!-- Quando compilar no Windows -->
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
@@ -28,6 +57,7 @@
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
     <DefineConstants>$(DefineConstants);OS_MAC</DefineConstants>
   </PropertyGroup>
+  
   <ItemGroup>
     <EmbeddedResource Update="LanguagesResource\ExceptionsResource.pt-BR.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -46,6 +76,7 @@
       <LastGenOutput>ExceptionsResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  
   <!-- TODO: Adicionar suporte de tradução à outros idiomas. -->
   <ItemGroup>
     <Compile Update="LanguagesResource\ExceptionsResource.pt-BR.Designer.cs">
@@ -69,6 +100,7 @@
       <DependentUpon>ExceptionsResource.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
