@@ -136,6 +136,17 @@ try {
     if (-not (Test-Path -LiteralPath $latestHelper)) { throw 'Snapshot helper is missing.' }
     Copy-Item -LiteralPath $latestHelper -Destination $cleanHelper
 
+    # The latest source still has one orphaned internal method named after
+    # StringList. Its sole historical caller was the excluded implementation.
+    # Remove only that dead method; retain generic array-validation helpers.
+    $helperText = [System.IO.File]::ReadAllText($cleanHelper)
+    $obsoleteMethod = '(?m)^[ \t]*\[MethodImpl\(MethodImplOptions\.NoInlining\)\]\r?\n[ \t]*internal static Exception ThrowForDuplicateOnStringList\(\)\r?\n[ \t]*=> new InvalidOperationException\(ExceptionsResource\.DuplicateValueTStringListAddObject\);\r?\n'
+    $cleanedHelper = [regex]::Replace($helperText, $obsoleteMethod, '')
+    if ($cleanedHelper -eq $helperText) {
+        throw 'Orphaned StringList exception helper not located as expected; review before publishing.'
+    }
+    [System.IO.File]::WriteAllText($cleanHelper, $cleanedHelper, [System.Text.UTF8Encoding]::new($false))
+
     Invoke-Git -Location $destination -Parameters @(
         'add', '--', 'src/Lagosystem.Modules/Helpers/ThrowHelper.Collections.cs',
         'tests/Lagosystem.Modules.Tests/Lagosystem.Modules.Tests.csproj'
