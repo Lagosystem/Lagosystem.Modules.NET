@@ -238,9 +238,11 @@ try {
     Invoke-Git -Location $destination -Parameters @('push', 'origin', 'HEAD:refs/heads/main')
     foreach ($branch in $branches) {
         $target = if ($branch -eq 'main') { 'history/foundation-main' } else { $branch }
-        Invoke-Git -Location $destination -Parameters @(
-            'push', 'origin', "refs/remotes/filtered/$branch" + ":refs/heads/$target"
-        )
+        # PowerShell must receive exactly one refspec argument. An ungrouped
+        # string + string expression inside @() is interpreted as two arguments,
+        # inadvertently creating refs/remotes/* while deleting refs/heads/*.
+        $refspec = 'refs/remotes/filtered/{0}:refs/heads/{1}' -f $branch, $target
+        Invoke-Git -Location $destination -Parameters @('push', 'origin', $refspec)
     }
     Write-Host 'History and branches published. CI, builds, tests and NuGet were NOT run.' -ForegroundColor Green
     $completed = $true
