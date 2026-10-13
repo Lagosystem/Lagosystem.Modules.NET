@@ -21,6 +21,7 @@
 
 - [ ] Complete sanitized source-history extraction, preserving original attribution/date metadata where technically feasible and branch ancestry; ensure `StringList` is absent **throughout public history**. / Concluir migração saneada de histórico e branches, sem StringList.
 - [ ] Review all public types and methods and generate a verified API inventory from the extracted tree / Inventariar cada classe e método público automaticamente.
+- [ ] Remove obsolete StringList-named resource keys and generated accessors that remain in the original latest source, confirming there are no remaining valid consumers / Eliminar chaves e propriedades antigas de resources relacionadas ao StringList, após validar referências.
 - [ ] Validate license provenance of all source, resources, third-party dependencies and imagery / Validar direitos autorais de todos os materiais.
 - [ ] Fix relative project references, packaging metadata and README examples after extraction / Ajustar caminhos e metadados.
 - [ ] Compile with supported toolchains and test Windows, Linux and macOS / Compilar e testar plataformas.
