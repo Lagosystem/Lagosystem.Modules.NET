@@ -22,7 +22,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../backend/Lagosystem.Modules/Lagosystem.Modules.csproj" />
+    <ProjectReference Include="../../src/Lagosystem.Modules/Lagosystem.Modules.csproj" />
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>
