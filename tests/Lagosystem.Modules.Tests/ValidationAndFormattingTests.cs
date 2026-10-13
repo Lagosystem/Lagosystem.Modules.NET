@@ -13,7 +13,7 @@ public sealed class ValidationAndFormattingTests
     [InlineData("", false)]
     public void CpfChecksDigitsAndLength(string input, bool expected)
     {
-        Assert.Equal(expected, Validate.IsCpf(input));
+        Assert.Equal(expected, Validate.IsBrCpf(input));
     }
 
     [Theory]
@@ -29,7 +29,7 @@ public sealed class ValidationAndFormattingTests
     [InlineData('9')]
     public void CpfRejectsRepeatedDigits(char digit)
     {
-        Assert.False(Validate.IsCpf(new string(digit, 11)));
+        Assert.False(Validate.IsBrCpf(new string(digit, 11)));
     }
 
     // Vetor alfanumérico publicado pelo Serpro:
@@ -48,7 +48,7 @@ public sealed class ValidationAndFormattingTests
     [InlineData("", false)]
     public void CnpjSupportsNumericAndAlphanumericCheckDigits(string input, bool expected)
     {
-        Assert.Equal(expected, Validate.IsCnpj(input));
+        Assert.Equal(expected, Validate.IsBrCnpj(input));
     }
 
     [Theory]

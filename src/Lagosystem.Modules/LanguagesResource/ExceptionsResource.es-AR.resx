@@ -224,4 +224,7 @@ Stack Trace:{0}{5}
   <data name="FinancialCashFlowsRateNotUnique" xml:space="preserve">
     <value>Los flujos de caja no permiten determinar una tasa de interés única.</value>
   </data>
+  <data name="StateRegistrationInvalidState" xml:space="preserve">
+    <value>La unidad federativa brasileña indicada no es válida o no se reconoce para validar la inscripción estadual.</value>
+  </data>
 </root>

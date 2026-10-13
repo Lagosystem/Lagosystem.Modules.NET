@@ -224,4 +224,7 @@ Stack Trace:{0}{5}
   <data name="FinancialCashFlowsRateNotUnique" xml:space="preserve">
     <value>Os fluxos de caixa não permitem determinar uma taxa de juros única.</value>
   </data>
+  <data name="StateRegistrationInvalidState" xml:space="preserve">
+    <value>A unidade federativa brasileira informada é inválida ou não é reconhecida para a validação da inscrição estadual.</value>
+  </data>
 </root>

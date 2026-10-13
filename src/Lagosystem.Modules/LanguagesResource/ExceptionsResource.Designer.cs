@@ -282,6 +282,15 @@ namespace Lagosystem.Modules.LanguagesResource {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified Brazilian state is invalid or not recognised for state registration validation..
+        /// </summary>
+        internal static string StateRegistrationInvalidState {
+            get {
+                return ResourceManager.GetString("StateRegistrationInvalidState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The destination array does not have enough space. Required {0}, space in destination array: {1}.
         /// </summary>
         internal static string StringList_CopyTo_ArrayDestinationTooSmall {

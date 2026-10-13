@@ -224,4 +224,7 @@ Stack Trace:{0}{5}
   <data name="FinancialCashFlowsRateNotUnique" xml:space="preserve">
     <value>The cash flows do not identify a unique interest rate.</value>
   </data>
+  <data name="StateRegistrationInvalidState" xml:space="preserve">
+    <value>The specified Brazilian state is invalid or not recognized for state registration validation.</value>
+  </data>
 </root>
