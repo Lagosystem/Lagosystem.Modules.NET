@@ -1,0 +1,32 @@
+# .NET build
+bin/
+obj/
+TestResults/
+**/TestResults/
+*.user
+*.suo
+*.rsuser
+*.cache
+*.tmp
+*.pdb
+*.nupkg
+*.snupkg
+*.trx
+coverage/
+coverage.*
+.vs/
+.idea/
+.vscode/
+_ReSharper*/
+*.DotSettings.user
+# System
+.DS_Store
+Thumbs.db
+# Environment/secrets
+.env
+.env.*
+!.env.example
+*.pfx
+*.key
+*.pem
+secrets.json
