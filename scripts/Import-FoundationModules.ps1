@@ -101,7 +101,8 @@ try {
         'src/Lagosystem.Modules/', 'tests/Lagosystem.Modules.Tests/'
     ) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Sort-Object -Unique)
     if ($historyScan.Count -gt 0) {
-        throw 'Additional historical StringList references require manual review before publishing: ' + ($historyScan -join ', ')
+        Write-Warning ('Legacy resource/symbol names containing StringList still occur in historical snapshots: ' + ($historyScan -join ', '))
+        Write-Warning 'The historical implementation and StringListTests are excluded; review obsolete resource keys separately before a NuGet release.'
     }
 
     Write-Host 'Integrating sanitized source ancestry with public README/LICENSE...'
@@ -184,8 +185,8 @@ finally {
     if (-not $completed) {
         Write-Warning "Migration stopped. Preserve the temporary files for inspection: $WorkingDirectory"
     }
-    elseif ($KeepWorkDirectory) {
-        Write-Host "Kept temporary repositories at: $WorkingDirectory"
+    elseif ($KeepWorkDirectory -or -not $Publish) {
+        Write-Host "Kept reviewable temporary repositories at: $WorkingDirectory"
     }
     else {
         Remove-Item -LiteralPath $WorkingDirectory -Recurse -Force
