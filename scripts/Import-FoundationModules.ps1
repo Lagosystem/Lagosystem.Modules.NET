@@ -31,8 +31,8 @@ function Invoke-Git {
         [Parameter(Mandatory = $true)][string[]]$Parameters,
         [string]$Location = ''
     )
-    if ($Location) { & git -C $Location @Parameters }
-    else { & git @Parameters }
+    if ($Location) { & git --no-pager -C $Location @Parameters }
+    else { & git --no-pager @Parameters }
     if ($LASTEXITCODE -ne 0) {
         throw "Git command failed ($LASTEXITCODE): git $($Parameters -join ' ')"
     }
