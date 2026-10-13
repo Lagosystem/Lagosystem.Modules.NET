@@ -1,0 +1,17 @@
+name: "Documentation or translation / Documentação ou tradução"
+description: "Suggest corrections to manuals, XML docs and examples"
+title: "docs: "
+labels: ["documentation"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: "File, API or section / Arquivo, API ou seção"
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: "Problem and proposed fix / Problema e correção sugerida"
+    validations:
+      required: true

@@ -1,0 +1,22 @@
+name: "Feature request / Sugestão"
+description: "Propose APIs, extensions and improvements / Proponha melhorias"
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem and use case / Problema e cenário"
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "Proposed design / Solução proposta"
+      description: "Method signatures, behavior and examples if possible / Assinaturas, comportamento e exemplos se possível"
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: "Compatibility, tests and dependencies / Compatibilidade, testes e dependências"
