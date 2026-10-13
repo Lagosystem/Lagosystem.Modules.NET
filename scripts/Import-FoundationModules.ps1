@@ -43,9 +43,62 @@ foreach ($executable in @('git', 'tar')) {
         throw "Required executable not found: $executable"
     }
 }
-& git filter-repo --version 2>$null | Out-Null
-if ($LASTEXITCODE -ne 0) {
-    throw 'git-filter-repo is required: py -m pip install git-filter-repo'
+# First prefer Git's official filter-repo subcommand. On Windows, pip --user
+# may install the Python module successfully but not add Scripts to PATH.
+# In that case invoke the module through the same Python launcher instead.
+$script:FilterRepoMode = ''
+$script:FilterRepoPython = ''
+try {
+    & git filter-repo --version 2>$null | Out-Null
+    if ($LASTEXITCODE -eq 0) { $script:FilterRepoMode = 'git' }
+}
+catch {
+    # Missing executable: test the Python module fallback below.
+}
+
+if ([string]::IsNullOrWhiteSpace($script:FilterRepoMode)) {
+    foreach ($pythonLauncher in @('py', 'python', 'python3')) {
+        if (-not (Get-Command $pythonLauncher -ErrorAction SilentlyContinue)) { continue }
+        try {
+            & $pythonLauncher -m git_filter_repo --version 2>$null | Out-Null
+            if ($LASTEXITCODE -eq 0) {
+                $script:FilterRepoMode = 'python'
+                $script:FilterRepoPython = $pythonLauncher
+                break
+            }
+        }
+        catch {
+            # Try another available Python launcher.
+        }
+    }
+}
+
+if ([string]::IsNullOrWhiteSpace($script:FilterRepoMode)) {
+    throw 'git-filter-repo not found. Run: py -m pip install --user --upgrade git-filter-repo ; then verify: py -m git_filter_repo --version'
+}
+Write-Host "git-filter-repo available via: $($script:FilterRepoMode)"
+
+function Invoke-FilterRepo {
+    param(
+        [Parameter(Mandatory = $true)][string]$Location,
+        [Parameter(Mandatory = $true)][string[]]$Parameters
+    )
+
+    if ($script:FilterRepoMode -eq 'git') {
+        Invoke-Git -Location $Location -Parameters (@('filter-repo') + $Parameters)
+        return
+    }
+
+    Push-Location -LiteralPath $Location
+    try {
+        & $script:FilterRepoPython -m git_filter_repo @Parameters
+        if ($LASTEXITCODE -ne 0) {
+            throw "git-filter-repo Python module failed ($LASTEXITCODE): $($Parameters -join ' ')"
+        }
+    }
+    finally {
+        Pop-Location
+    }
 }
 if ([string]::IsNullOrWhiteSpace($WorkingDirectory)) {
     $WorkingDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ('lagosystem-modules-' + [Guid]::NewGuid().ToString('N'))
@@ -79,8 +132,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Could not extract the safe current helper.' }
 
     Write-Host 'Filtering private ERP history to modules and module tests only...'
-    Invoke-Git -Location $filtered -Parameters @(
-        'filter-repo', '--force',
+    Invoke-FilterRepo -Location $filtered -Parameters @(
+        '--force',
         '--path', 'backend/Lagosystem.Modules/',
         '--path', 'tests/Lagosystem.Modules.Tests/',
         '--path-rename', 'backend/Lagosystem.Modules/:src/Lagosystem.Modules/'
@@ -88,8 +141,8 @@ try {
 
     # Remove the implementation and references from every historical commit.
     # Reintroduce ONLY the current, reviewed helper later as a new clean commit.
-    Invoke-Git -Location $filtered -Parameters @(
-        'filter-repo', '--force', '--invert-paths',
+    Invoke-FilterRepo -Location $filtered -Parameters @(
+        '--force', '--invert-paths',
         '--path', 'src/Lagosystem.Modules/Collections/StringList.cs',
         '--path', 'src/Lagosystem.Modules/Helpers/ThrowHelper.Collections.cs',
         '--path', 'tests/Lagosystem.Modules.Tests/StringListTests.cs'
