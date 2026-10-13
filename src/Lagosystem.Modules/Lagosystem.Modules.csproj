@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageId>Lagosystem</PackageId>
+    <PackageId>Lagosystem.Modules</PackageId>
     <Authors>Lagosystem Foundation</Authors>
     <Description>Modules, functions and others</Description>
     <Company>Lagosystem</Company>
@@ -27,8 +27,8 @@
 
     <!-- Repository -->
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/leonardo-nicolas/SEU-REPOSITORIO</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/leonardo-nicolas/SEU-REPOSITORIO</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/lagosystem/Lagosystem.Modules.NET</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/lagosystem/Lagosystem.Modules.NET</PackageProjectUrl>
 
     <!-- Branding -->
     <PackageIcon>6fa00a3b-9673-4ae6-af59-267f00dc5825.png</PackageIcon>
