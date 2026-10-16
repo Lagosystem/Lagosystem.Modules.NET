@@ -22,7 +22,7 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cpf">The <see cref="ReadOnlySpan{T}"/> containing the CPF to format.</param>
         /// <returns>The formatted <see cref="string"/> with the CPF mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCpf(ReadOnlySpan<char> cpf)
+        public static string FormatBrazilianCpf(ReadOnlySpan<char> cpf)
         {
             Span<char> buffer = stackalloc char[11];
             int len = FormatAndValidationHelper.ExtractOnlyNumbers(cpf, buffer);
@@ -52,7 +52,7 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cnpj">The <see cref="ReadOnlySpan{T}"/> containing the CNPJ to format.</param>
         /// <returns>The formatted <see cref="string"/> with the CNPJ mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCnpj(ReadOnlySpan<char> cnpj)
+        public static string FormatBrazilianCnpj(ReadOnlySpan<char> cnpj)
         {
             Span<char> buffer = stackalloc char[14];
             int len = FormatAndValidationHelper.ExtractOnlyNumbers(cnpj, buffer);
@@ -82,7 +82,7 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cep">The <see cref="ReadOnlySpan{T}"/> containing the ZIP Code to format.</param>
         /// <returns>The formatted <see cref="string"/> with the ZIP Code mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatZipCode(ReadOnlySpan<char> cep)
+        public static string FormatBrazilianZipCode(ReadOnlySpan<char> cep)
         {
             Span<char> buffer = stackalloc char[8];
             int len = FormatAndValidationHelper.ExtractOnlyNumbers(cep, buffer);
@@ -112,7 +112,7 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cpf">The raw string containing the CPF to format.</param>
         /// <returns>The formatted <see cref="string"/> with the CPF mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCpf(string cpf) => cpf.IsBlank() ? string.Empty : FormatCpf(cpf.AsSpan());
+        public static string FormatBrazilianCpf(string cpf) => cpf.IsBlank() ? string.Empty : FormatBrazilianCpf(cpf.AsSpan());
 
         /// <summary>Formats a CNPJ string by applying the standard mask (00.000.000/0000-00).</summary>
         /// <remarks>
@@ -122,7 +122,7 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cnpj">The raw string containing the CNPJ to format.</param>
         /// <returns>The formatted <see cref="string"/> with the CNPJ mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCnpj(string cnpj) => cnpj.IsBlank() ? string.Empty : FormatCnpj(cnpj.AsSpan());
+        public static string FormatBrazilianCnpj(string cnpj) => cnpj.IsBlank() ? string.Empty : FormatBrazilianCnpj(cnpj.AsSpan());
 
         /// <summary>Formats a ZIP Code (CEP) string by applying the standard mask (00000-000).</summary>
         /// <remarks>
@@ -131,7 +131,7 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cep">The raw string containing the ZIP Code to format.</param>
         /// <returns>The formatted <see cref="string"/> with the ZIP Code mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatZipCode(string cep) => cep.IsBlank() ? string.Empty : FormatZipCode(cep.AsSpan());
+        public static string FormatBrazilianZipCode(string cep) => cep.IsBlank() ? string.Empty : FormatBrazilianZipCode(cep.AsSpan());
 
         #endregion
 
@@ -145,11 +145,11 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cpf">The <see cref="long"/> numeric value of the CPF to format.</param>
         /// <returns>The formatted <see cref="string"/> with the CPF mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCpf(long cpf)
+        public static string FormatBrazilianCpf(long cpf)
         {
             Span<char> buffer = stackalloc char[20];
             int charsWritten = cpf.ToSpan(buffer);
-            return FormatCpf(buffer[..charsWritten]);
+            return FormatBrazilianCpf(buffer[..charsWritten]);
         }
 
         /// <summary>Formats a numeric CNPJ value by applying the standard mask (00.000.000/0000-00).</summary>
@@ -160,11 +160,11 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cnpj">The <see cref="long"/> numeric value of the CNPJ to format.</param>
         /// <returns>The formatted <see cref="string"/> with the CNPJ mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCnpj(long cnpj)
+        public static string FormatBrazilianCnpj(long cnpj)
         {
             Span<char> buffer = stackalloc char[20];
             int charsWritten = cnpj.ToSpan(buffer);
-            return FormatCnpj(buffer[..charsWritten]);
+            return FormatBrazilianCnpj(buffer[..charsWritten]);
         }
 
         /// <summary>Formats a numeric ZIP Code (CEP) value by applying the standard mask (00000-000).</summary>
@@ -174,11 +174,11 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cep">The <see cref="long"/> numeric value of the ZIP Code to format.</param>
         /// <returns>The formatted <see cref="string"/> with the ZIP Code mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatZipCode(long cep)
+        public static string FormatBrazilianZipCode(long cep)
         {
             Span<char> buffer = stackalloc char[20];
             int charsWritten = cep.ToSpan(buffer);
-            return FormatZipCode(buffer[..charsWritten]);
+            return FormatBrazilianZipCode(buffer[..charsWritten]);
         }
 
         /// <summary>Formats a numeric CPF value by applying the standard mask (000.000.000-00).</summary>
@@ -189,11 +189,11 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cpf">The <see cref="ulong"/> numeric value of the CPF to format.</param>
         /// <returns>The formatted <see cref="string"/> with the CPF mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCpf(ulong cpf)
+        public static string FormatBrazilianCpf(ulong cpf)
         {
             Span<char> buffer = stackalloc char[20];
             int charsWritten = cpf.ToSpan(buffer);
-            return FormatCpf(buffer[..charsWritten]);
+            return FormatBrazilianCpf(buffer[..charsWritten]);
         }
 
         /// <summary>Formats a numeric CNPJ value by applying the standard mask (00.000.000/0000-00).</summary>
@@ -204,11 +204,11 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cnpj">The <see cref="ulong"/> numeric value of the CNPJ to format.</param>
         /// <returns>The formatted <see cref="string"/> with the CNPJ mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCnpj(ulong cnpj)
+        public static string FormatBrazilianCnpj(ulong cnpj)
         {
             Span<char> buffer = stackalloc char[20];
             int charsWritten = cnpj.ToSpan(buffer);
-            return FormatCnpj(buffer[..charsWritten]);
+            return FormatBrazilianCnpj(buffer[..charsWritten]);
         }
 
         /// <summary>Formats a numeric ZIP Code (CEP) value by applying the standard mask (00000-000).</summary>
@@ -218,11 +218,11 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cep">The <see cref="ulong"/> numeric value of the ZIP Code to format.</param>
         /// <returns>The formatted <see cref="string"/> with the ZIP Code mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatZipCode(ulong cep)
+        public static string FormatBrazilianZipCode(ulong cep)
         {
             Span<char> buffer = stackalloc char[20];
             int charsWritten = cep.ToSpan(buffer);
-            return FormatZipCode(buffer[..charsWritten]);
+            return FormatBrazilianZipCode(buffer[..charsWritten]);
         }
 
         #endregion
@@ -234,21 +234,21 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cpf">The object representing the CPF.</param>
         /// <returns>The formatted <see cref="string"/> with the CPF mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCpf<T>(T? cpf) => ApplyMask(cpf, 11, "000.000.000-00");
+        public static string FormatBrazilianCpf<T>(T? cpf) => ApplyMask(cpf, 11, "000.000.000-00");
 
         /// <summary>Formats any generic object representing a CNPJ by applying the standard mask (00.000.000/0000-00).</summary>
         /// <typeparam name="T">The type of the object being formatted.</typeparam>
         /// <param name="cnpj">The object representing the CNPJ.</param>
         /// <returns>The formatted <see cref="string"/> with the CNPJ mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCnpj<T>(T? cnpj) => ApplyMask(cnpj, 14, "00.000.000/0000-00");
+        public static string FormatBrazilianCnpj<T>(T? cnpj) => ApplyMask(cnpj, 14, "00.000.000/0000-00");
 
         /// <summary>Formats any generic object representing a ZIP Code (CEP) by applying the standard mask (00000-000).</summary>
         /// <typeparam name="T">The type of the object being formatted.</typeparam>
         /// <param name="zipCode">The object representing the ZIP Code.</param>
         /// <returns>The formatted <see cref="string"/> with the ZIP Code mask, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatZipCode<T>(T? zipCode) => ApplyMask(zipCode, 8, "00000-000");
+        public static string FormatBrazilianZipCode<T>(T? zipCode) => ApplyMask(zipCode, 8, "00000-000");
 
         // ---------------------------------------------------------
         // The high-performance engine that does the heavy lifting
@@ -317,5 +317,6 @@ namespace Lagosystem.Modules.Formatting
         }
 
         #endregion
+        
     }
 }

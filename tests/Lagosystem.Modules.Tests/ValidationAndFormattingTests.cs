@@ -67,12 +67,12 @@ public sealed class ValidationAndFormattingTests
     [Fact]
     public void DocumentMasksPreserveIdentifiers()
     {
-        Assert.Equal("529.982.247-25", Format.FormatCpf("52998224725"));
-        Assert.Equal("11.222.333/0001-81", Format.FormatCnpj("11222333000181"));
-        Assert.Equal("01310-100", Format.FormatZipCode("01310100"));
-        Assert.Equal("01310-100", Format.FormatZipCode(1310100L));
-        Assert.Equal(string.Empty, Format.FormatCpf("00000000000"));
-        Assert.Equal(string.Empty, Format.FormatZipCode("013101000"));
+        Assert.Equal("529.982.247-25", Format.FormatBrazilianCpf("52998224725"));
+        Assert.Equal("11.222.333/0001-81", Format.FormatBrazilianCnpj("11222333000181"));
+        Assert.Equal("01310-100", Format.FormatBrazilianZipCode("01310100"));
+        Assert.Equal("01310-100", Format.FormatBrazilianZipCode(1310100L));
+        Assert.Equal(string.Empty, Format.FormatBrazilianCpf("00000000000"));
+        Assert.Equal(string.Empty, Format.FormatBrazilianZipCode("013101000"));
     }
 
     [Theory]
@@ -92,8 +92,8 @@ public sealed class ValidationAndFormattingTests
         Assert.Equal("12345678", Format.FormatNcmCode("12345678"));
         Assert.Equal(string.Empty, Format.FormatNcmCode("123456789"));
         Assert.Equal(string.Empty, Format.FormatNcmCode("00000000"));
-        Assert.Equal("0012345", Format.FormatCestCode("12345"));
-        Assert.Equal(string.Empty, Format.FormatCestCode("12345678"));
+        Assert.Equal("0012345", Format.FormatBrazilianCestCode("12345"));
+        Assert.Equal(string.Empty, Format.FormatBrazilianCestCode("12345678"));
     }
 
     [Theory]

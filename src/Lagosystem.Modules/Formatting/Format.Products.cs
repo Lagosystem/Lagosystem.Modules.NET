@@ -20,7 +20,7 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cest">The raw string containing the CEST code to format.</param>
         /// <returns>The formatted CEST code, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCestCode(string? cest) => FormatCestCode((cest ?? string.Empty).AsSpan());
+        public static string FormatBrazilianCestCode(string? cest) => FormatBrazilianCestCode((cest ?? string.Empty).AsSpan());
 
         /// <summary>Formats an EAN (European Article Number) barcode string.</summary>
         /// <param name="ean">The raw string containing the EAN code to format.</param>
@@ -66,7 +66,7 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cest">The <see cref="ReadOnlySpan{T}"/> containing the CEST code.</param>
         /// <returns>The formatted CEST code, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCestCode(ReadOnlySpan<char> cest)
+        public static string FormatBrazilianCestCode(ReadOnlySpan<char> cest)
         {
             if (cest.IsEmpty) return string.Empty;
             
@@ -137,11 +137,11 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cest">The <see cref="long"/> numeric value of the CEST code.</param>
         /// <returns>The formatted CEST code, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCestCode(long cest)
+        public static string FormatBrazilianCestCode(long cest)
         {
             Span<char> buffer = stackalloc char[20];
             int charsWritten = cest.ToSpan(buffer);
-            return FormatCestCode(buffer[..charsWritten]);
+            return FormatBrazilianCestCode(buffer[..charsWritten]);
         }
 
         /// <summary>Formats a numeric EAN barcode.</summary>
@@ -174,11 +174,11 @@ namespace Lagosystem.Modules.Formatting
         /// <param name="cest">The <see cref="ulong"/> numeric value of the CEST code.</param>
         /// <returns>The formatted CEST code, or <see cref="string.Empty"/> if invalid.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string FormatCestCode(ulong cest)
+        public static string FormatBrazilianCestCode(ulong cest)
         {
             Span<char> buffer = stackalloc char[20];
             int charsWritten = cest.ToSpan(buffer);
-            return FormatCestCode(buffer[..charsWritten]);
+            return FormatBrazilianCestCode(buffer[..charsWritten]);
         }
 
         /// <summary>Formats a numeric EAN barcode.</summary>
