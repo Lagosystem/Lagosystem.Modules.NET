@@ -92,7 +92,6 @@ public static partial class Validate
                 }
                 finally { if (originalPosition.HasValue) value.Position = originalPosition.Value; }
             }
-
         }
         catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(GrantNotNullOrEmpty), nameof(Validate)))
         { throw; }
@@ -125,9 +124,7 @@ public static partial class Validate
             throw new ArgumentOutOfRangeException(fieldName, value, $"The field '{fieldName}' cannot contain a negative value.");
     }
 
-    /// <summary>
-    /// Determines whether the specified string is a valid Regular Expression pattern.
-    /// </summary>
+    /// <summary>Determines whether the specified string is a valid Regular Expression pattern.</summary>
     /// <param name="regex">The string pattern to validate.</param>
     /// <returns>
     /// <see langword="true"/> if the string is a valid regex pattern and can be compiled; otherwise, <see langword="false"/>.
@@ -143,19 +140,33 @@ public static partial class Validate
         catch (ArgumentException) { return false; }
     }
     
-    /// <summary>
-    /// Determines whether the specified string represents a valid, specific (non-neutral) culture.
-    /// </summary>
-    /// <param name="culture">The culture name to validate (e.g., "en-US", "pt-BR").</param>
+    /// <summary>Determines whether the specified string represents a valid, specific (non-neutral) cultureName.</summary>
+    /// <param name="cultureName">The cultureCode code to validate (e.g., "pt-BR", "en-US", "es-AR").</param>
     /// <returns>
-    /// <see langword="true"/> if the culture name is valid and represents a specific country/region; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the cultureName name is valid and represents a specific country/region; otherwise, <see langword="false"/>.
     /// </returns>
-    public static bool IsValidSpecificCulture(string? culture)
+    public static bool IsValidSpecificCulture(string? cultureName)
     {
-        if (culture.IsBlank()) return false; 
+        if (cultureName.IsBlank()) return false; 
         try
         {
-            CultureInfo cultureInfo = CultureInfo.GetCultureInfo(culture!);
+            CultureInfo cultureInfo = CultureInfo.GetCultureInfo(cultureName);
+            return !cultureInfo.IsNeutralCulture && !Equals(cultureInfo, CultureInfo.InvariantCulture);
+        }
+        catch (CultureNotFoundException) { return false; }
+    }
+    
+    /// <summary>Determines whether the specified string represents a valid, specific (non-neutral) cultureCode.</summary>
+    /// <param name="cultureCode">The cultureCode code to validate (e.g., 1046, 1033, 11274).</param>
+    /// <returns>
+    /// <see langword="true"/> if the cultureCode name is valid and represents a specific country/region; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsValidSpecificCulture(int? cultureCode)
+    {
+        if (!cultureCode.HasValue) return false; 
+        try
+        {
+            CultureInfo cultureInfo = CultureInfo.GetCultureInfo(cultureCode.Value);
             return !cultureInfo.IsNeutralCulture && !Equals(cultureInfo, CultureInfo.InvariantCulture);
         }
         catch (CultureNotFoundException) { return false; }
