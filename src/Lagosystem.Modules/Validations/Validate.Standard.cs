@@ -18,9 +18,7 @@ namespace Lagosystem.Modules.Validations
     {
         #region URLs
 
-        /// <summary>
-        /// Validates whether the specified string represents a syntactically valid HTTP or HTTPS URL.
-        /// </summary>
+        /// <summary>Validates whether the specified string represents a syntactically valid HTTP or HTTPS URL.</summary>
         /// <param name="url">The URL string to validate.</param>
         /// <returns><see langword="true"/> if the URL is valid; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -45,7 +43,8 @@ namespace Lagosystem.Modules.Validations
 
                 if (!requireHttpOrHttps) return true;
                 string scheme = uri.Scheme.ToLowerInvariant();
-                return scheme == Uri.UriSchemeHttp || scheme == Uri.UriSchemeHttps;
+                const StringComparison comparison = StringComparison.OrdinalIgnoreCase;
+                return scheme.Equals(Uri.UriSchemeHttp,comparison) || scheme.Equals(Uri.UriSchemeHttps,comparison);
             }
             catch (StackOverflowException) { throw; }
             catch (OutOfMemoryException) { throw; }

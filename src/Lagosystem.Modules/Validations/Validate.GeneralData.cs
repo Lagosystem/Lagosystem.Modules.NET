@@ -88,10 +88,7 @@ namespace Lagosystem.Modules.Validations
                     continue;
                 }
                 if (paddingCount > 0) return false; // If we already encountered padding '=', any subsequent non-padding characters make the format invalid
-                if ((c >= 'A' && c <= 'Z') ||
-                    (c >= 'a' && c <= 'z') ||
-                    (c >= '0' && c <= '9') ||
-                    c == '+' || c == '/')
+                if (c is >= 'A' and <= 'Z' or >= 'a' and <= 'z' or >= '0' and <= '9' or '+' or '/')
                     validCharCount++; // Valid Base64 chars: A-Z, a-z, 0-9, +, /
                 else
                     return false; // Invalid character found
@@ -105,7 +102,7 @@ namespace Lagosystem.Modules.Validations
         /// <summary>Validates whether the specified character sequence is a structurally valid Base-64 format.</summary>
         /// <param name="base64">The character sequence to validate.</param>
         /// <returns><see langword="true"/> if the sequence is valid Base-64; otherwise, <see langword="false"/>.</returns>
-        public static bool IsValidBase64(string? base64) => !base64.IsBlank() && IsValidBase64(base64!.AsSpan());
+        public static bool IsValidBase64(string? base64) => !base64.IsBlank() && IsValidBase64(base64.AsSpan());
         
         #endregion
         

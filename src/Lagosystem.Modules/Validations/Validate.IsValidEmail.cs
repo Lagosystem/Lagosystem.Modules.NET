@@ -31,8 +31,7 @@ namespace Lagosystem.Modules.Validations
         /// <param name="email">The e-mail address string to validate.</param>
         /// <returns><see langword="true"/> if the e-mail is valid; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsValidEmail(string? email) =>
-            !email.IsBlank() && IsValidEmailSyntax(email!.AsSpan());
+        public static bool IsValidEmail(string? email) => !email.IsBlank() && IsValidEmailSyntax(email.AsSpan());
 
         /// <summary>
         /// Validates whether the specified string represents a syntactically valid e-mail address and
@@ -72,10 +71,7 @@ namespace Lagosystem.Modules.Validations
                     if (isKnownProvider) return false; // Known provider using subdomain is rejected
                     partialSupport = true;
                 }
-                else
-                {
-                    if (!isKnownProvider) partialSupport = true;
-                }
+                else if (!isKnownProvider) partialSupport = true;
 
                 if (usesPlus && !isKnownProvider)
                     partialSupport = true;
@@ -199,7 +195,7 @@ namespace Lagosystem.Modules.Validations
             if (!CountryTwoLevelSuffixes.Contains(lastTwo)) return lastTwo;
 
             if (labels.Length == 3) return labels[0] + "." + lastTwo;
-            return labels[labels.Length - 3] + "." + lastTwo;
+            return labels[^3] + "." + lastTwo;
         }
 
         #endregion
