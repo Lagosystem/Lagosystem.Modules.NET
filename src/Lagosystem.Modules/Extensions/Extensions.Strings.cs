@@ -4,7 +4,8 @@ namespace Lagosystem.Modules.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
 using Lagosystem.Modules.Memory;
-using System.Diagnostics.Contracts;
+using sdc = System.Diagnostics.Contracts;
+using jba = JetBrains.Annotations;
 
 using System.Buffers;
 using Lagosystem.Modules.Helpers;
@@ -45,23 +46,21 @@ public static class StringsExtensions
     }
 
     /// <summary>
-    /// Determines whether a string is null, empty, consists only of whitespace,
-    /// or has no visually meaningful characters according to the library's
-    /// Unicode classification.
+    /// Determines whether a string is null, empty, consists only of whitespace,  or has no visually meaningful
+    /// characters according to the library's Unicode classification.
     /// </summary>
     /// <param name="source">The text to inspect, including a possible null value.</param>
     /// <returns>
-    /// <see langword="true"/> when the input has no visible content;
-    /// otherwise <see langword="false"/>.
+    /// <see langword="true"/> when the input has no visible content; otherwise <see langword="false"/>.
     /// </returns>
     /// <remarks>
     /// Valid visible characters in emoji sequences keep the input nonblank.
-    /// Isolated controls, invisible formatting characters and malformed
-    /// UTF-16 surrogate code units do not count as visible content.
-    /// The PostgreSQL translation registered in the API is an approximation:
-    /// SQL does not replicate the .NET Unicode classification exactly.
+    /// Isolated controls, invisible formatting characters and malformed UTF-16 surrogate code units do not count as visible content.
+    /// The Databases translation registered in the API is an approximation: SQL does not replicate the .NET Unicode classification exactly.
     /// </remarks>
-    [Pure]
+    [sdc.Pure]
+    [jba.Pure]
+    [jba.ContractAnnotation("null=>true", true)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsBlank([NotNullWhen(false)] this string? source) => source is null 
         || string.IsNullOrEmpty(source) || string.IsNullOrWhiteSpace(source) 
@@ -97,13 +96,13 @@ public static class StringsExtensions
     }
 
     /// <summary>
-    /// Cleans the input string using <see cref="Clean(string, bool)"/> and normalizes it to a single line,
-    /// removing carriage returns and line feeds, and optionally removing spaces and TAB characters.
+    /// Cleans the input string using <see cref="Clean(string, bool)"/> and normalizes it to a single line, removing
+    /// carriage returns and line feeds, and optionally removing spaces and TAB characters.
     /// </summary>
     /// <param name="source">The original string to normalize.</param>
     /// <param name="asUpperCase">Indicates the <paramref name="source"/> must return in UPPER CASE or normal case.</param>
     /// <param name="noSpaces">
-    /// When <see langword="true"/>, all space (' ') and TAB ('\t') characters are removed from
+    /// When <see langword="true"/>, all space (" ") and TAB ("\t") characters are removed from
     /// the cleaned string. When <see langword="false"/>, spaces and TABs are preserved.
     /// </param>
     /// <returns>
