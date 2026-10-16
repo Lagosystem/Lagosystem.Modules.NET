@@ -5,6 +5,7 @@ using Lagosystem.Modules.Helpers;
 using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
 using System.Runtime.CompilerServices;
+using System.ComponentModel;
 
 /// <summary>
 /// Provides global configuration settings for the Lagosystem library. 
@@ -16,26 +17,25 @@ public static class Settings
     private static short _defaultSpanBufferSize = 512;
     private static int _defaultStreamBufferSize = 80 * (int)DataUnit.Kilobyte;
     private static int _maxBase64StreamSize = 50 * (int)DataUnit.Megabyte;
+    private static int _partitionInitialCapacity = 0;
 
     /// <summary>
-    /// Gets or sets the maximum allowed size (in bytes) for a stream to be loaded into memory 
-    /// for Base64 string conversion. The default is 50 MB.
+    /// Gets or sets the maximum allowed size (in bytes) for a stream to be loaded into memory for Base64 string
+    /// conversion. The default is 50 MB.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when the provided value is less than 1 byte or greater than 200 Megabytes.
-    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the provided value is less than 1 byte or greater than 200 Megabytes.</exception>
     [Range(1 * (int)DataUnit.Byte, 200 * (int)DataUnit.Megabyte)]
     [ValueRange(1 * (int)DataUnit.Byte, 200 * (int)DataUnit.Megabyte)]
     public static int MaxBase64StreamSize
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _maxBase64StreamSize;
+        get => Volatile.Read(ref _maxBase64StreamSize);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
             ThrowHelper.ThrowIfLessThan(value, 1 * (int)DataUnit.Byte);
             ThrowHelper.ThrowIfGreaterThan(value, 200 * (int)DataUnit.Megabyte);
-            _maxBase64StreamSize = value;
+            Volatile.Write(ref _maxBase64StreamSize, value);
         }
     }
 
@@ -52,10 +52,9 @@ public static class Settings
     /// Thrown when the resulting number of bytes exceeds the range supported by <see cref="int"/>.
     /// </exception>
     /// <remarks>
-    /// For example, converting <c>19.8</c> <see cref="DataUnit.Megabyte"/> to bytes
-    /// returns <c>20,761,805</c> bytes after rounding the fractional result up to the
-    /// nearest whole byte. The resulting value can then be used as the buffer size,
-    /// expressed in bytes.
+    /// For example, converting <c>19.8</c> <see cref="DataUnit.Megabyte"/> to bytes returns <c>20,761,805</c> bytes
+    /// after rounding the fractional result up to the nearest whole byte. The resulting value can then be used as
+    /// the buffer size, expressed in bytes.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetDataUnitForStream(decimal requestedSize, DataUnit dataUnit)
@@ -103,9 +102,7 @@ public static class Settings
     public static TResult GetDataUnit<TResult>(decimal dataUnitIn, DataUnit dataUnitModeIn, DataUnit dataUnitModeResult)
         where TResult : struct, IConvertible
     {
-        decimal result = dataUnitIn *
-             (long)dataUnitModeIn /
-             (long)dataUnitModeResult;
+        decimal result = dataUnitIn * (long)dataUnitModeIn / (long)dataUnitModeResult;
 
         object convertedResult = Type.GetTypeCode(typeof(TResult)) switch
         {
@@ -141,13 +138,13 @@ public static class Settings
     public static short DefaultSpanBufferSize
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _defaultSpanBufferSize;
+        get => Volatile.Read(ref _defaultSpanBufferSize);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
             ThrowHelper.ThrowIfLessThan(value, sbyte.MaxValue * (int)DataUnit.Byte);
             ThrowHelper.ThrowIfGreaterThan(value, 1 * (int)DataUnit.Kilobyte);
-            _defaultSpanBufferSize = value;
+            Volatile.Write(ref _defaultSpanBufferSize, value);
         }
     }
 
@@ -163,13 +160,29 @@ public static class Settings
     public static int DefaultStreamBufferSize
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _defaultStreamBufferSize;
+        get => Volatile.Read(ref _defaultStreamBufferSize);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         set
         {
             ThrowHelper.ThrowIfLessThan(value, 16 * (int)DataUnit.Byte);
             ThrowHelper.ThrowIfGreaterThan(value, 2 * (int)DataUnit.Megabyte /*1mb = 1.048.576*/);
-            _defaultStreamBufferSize = value;
+            Volatile.Write(ref _defaultStreamBufferSize, value);
+        }
+    }
+    
+
+    /// <summary>Gets or sets the default initial capacity allocated for each partition (to use in methods in <see cref="Extensions.EnumerableExtensions"/>).</summary>
+    [EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    [Obsolete("This prop will be use in future")]
+    public static int PartitionInitialCapacity
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Volatile.Read(ref _partitionInitialCapacity);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set
+        {
+            if (value < 0) throw new ArgumentOutOfRangeException(nameof(value));
+            Volatile.Write(ref _partitionInitialCapacity, value);
         }
     }
 }
