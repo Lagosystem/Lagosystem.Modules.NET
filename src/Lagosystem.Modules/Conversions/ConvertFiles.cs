@@ -86,8 +86,7 @@ namespace Lagosystem.Modules.Conversions
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(ToBase64), nameof(Conversion)))
             {
-                if (Diagnostics.ThrowInDebugMode && System.Diagnostics.Debugger.IsAttached) throw;
-                return string.Empty;
+                throw;
             }
         }
         
@@ -150,8 +149,7 @@ namespace Lagosystem.Modules.Conversions
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(ToBase64Async), nameof(Conversion)))
             {
-                if (Diagnostics.ThrowInDebugMode && System.Diagnostics.Debugger.IsAttached) throw;
-                return string.Empty;
+                throw;
             }
         }
         
@@ -201,7 +199,7 @@ namespace Lagosystem.Modules.Conversions
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(FromBase64), nameof(Conversion)))
             {
-                if (Diagnostics.ThrowInDebugMode && System.Diagnostics.Debugger.IsAttached) throw;
+                throw;
             }
         }
 
@@ -231,7 +229,7 @@ namespace Lagosystem.Modules.Conversions
             }
             catch (Exception exception) when (Diagnostics.ReportOperationalFailure(exception, nameof(FromBase64Async), nameof(Conversion)))
             {
-                if (Diagnostics.ThrowInDebugMode && System.Diagnostics.Debugger.IsAttached) throw;
+                throw;
             }
         }
 
