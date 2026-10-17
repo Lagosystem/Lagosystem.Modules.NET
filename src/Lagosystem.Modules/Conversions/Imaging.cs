@@ -3,6 +3,7 @@
 namespace Lagosystem.Modules.Conversions;
 using Lagosystem.Modules.Helpers;
 
+/// <summary>Provides conversions and helpers for RGB, ARGB and CMYK color models.</summary>
 public static class Imaging
 {
     #region Colors

@@ -83,7 +83,7 @@ namespace Lagosystem.Modules.Helpers
         {
             throw new ArgumentException(string.Format(ExceptionsResource.NegativeValueDennied, paramName, gotValue),paramName);
         }
-        internal static void ThrowIfNegativeValue<T>(T value, [jba.InvokerParameterName, jba.LocalizationRequired(false)] string paramName = null) 
+        internal static void ThrowIfNegativeValue<T>(T value, [jba.InvokerParameterName, jba.LocalizationRequired(false)] string? paramName = null) 
             where T : struct, IComparable<T>
         {
             // Se o valor for menor que zero (default), o CompareTo retornará um número menor que 0
