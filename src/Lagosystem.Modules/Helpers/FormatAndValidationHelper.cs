@@ -4,8 +4,6 @@ namespace Lagosystem.Modules.Helpers;
 using Lagosystem.Modules.Formatting;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 internal static class FormatAndValidationHelper
