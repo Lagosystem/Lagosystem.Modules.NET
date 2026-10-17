@@ -39,7 +39,7 @@ namespace Lagosystem.Modules
         /// <summary>Gets or sets a value indicating whether exceptions should be re-thrown when the application is running in DEBUG mode.</summary>
         /// <value>
         /// <see langword="true"/> to re-throw exceptions to the debugger;
-        /// otherwise, <see langword="false"/> to silently catch and report them.
+        /// otherwise, <see langword="false"/> to let the library control handling in debugger sessions.
         /// </value>
         [DebuggerDisplay("{ThrowInDebugMode,nq}")]
         public static bool ThrowInDebugMode
