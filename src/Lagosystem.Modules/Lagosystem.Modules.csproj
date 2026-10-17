@@ -4,11 +4,13 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageId>Lagosystem.Modules</PackageId>
-    <Authors>Lagosystem Foundation</Authors>
+    <PackageId>Lagosystem.Modules.NET</PackageId>
+    <Authors>Lagosystem</Authors>
     <Description>Modules, functions and others</Description>
     <Company>Lagosystem</Company>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
+    <Version>0.1.0</Version>
     <AssemblyName>Lagosystem.Modules</AssemblyName>
     <RootNamespace>Lagosystem.Modules</RootNamespace>
     <LangVersion>11</LangVersion>
@@ -16,14 +18,17 @@
   
   <PropertyGroup>
     <!-- NuGet Package Metadata -->
-    <PackageId>Lagosystem.Modules</PackageId>
-    <Title>Lagosystem.Modules</Title>
-    <Authors>Lagosystem Foundation</Authors>
+    <PackageId>Lagosystem.Modules.NET</PackageId>
+    <Title>Lagosystem.Modules.NET</Title>
+    <Authors>Lagosystem</Authors>
     <Description>Open-source .NET library providing reusable modules, extensions, helpers, and utilities for modern applications.</Description>
     <PackageTags>lagosystem;modules;extensions;utilities;helpers;dotnet;opensource</PackageTags>
 
     <!-- Licensing -->
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright © 2026 Lagosystem</Copyright>
 
     <!-- Repository -->
     <RepositoryType>git</RepositoryType>
@@ -41,6 +46,7 @@
 
   <ItemGroup>
     <None Include="Assets\6fa00a3b-9673-4ae6-af59-267f00dc5825.png" Pack="true" PackagePath="\" />
+    <None Include="PACKAGE_README.md" Pack="true" PackagePath="README.md" />
   </ItemGroup>
 
    <!-- Quando compilar no Windows -->
