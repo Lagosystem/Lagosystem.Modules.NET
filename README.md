@@ -6,7 +6,7 @@
 
 Lagosystem.Modules is a general-purpose .NET Standard 2.1 library intended for applications beyond the Lagosystem platform. The library provides string and collection extensions, validation and formatting helpers, numeric and financial calculations, conversions, diagnostic utilities, resource-based error messages, and memory utilities.
 
-> **Pre-release / Pré-lançamento:** The standalone repository is being extracted from the former Foundation monorepo. There is **no published NuGet release or verified standalone build yet**. Do not infer readiness from existing test source files.
+> **Published / Publicado:** The library is available on [NuGet.org](https://www.nuget.org/packages/Lagosystem.Modules.NET), published through GitHub Actions with OIDC after successful .NET 10 builds and unit tests. Git history migration from the former Foundation monorepo is a separate, ongoing task.
 
 ## Scope / Escopo
 
@@ -22,7 +22,15 @@ Lagosystem.Modules is a general-purpose .NET Standard 2.1 library intended for a
 | `LanguagesResource` | Localized exception messages and resource files |
 | `Settings` / diagnostics | Runtime options, diagnostics and exception callbacks |
 
-Current code is designed for `netstandard2.1`; the existing test project targets `net10.0`. Actual compatibility and test results remain subject to validation.
+The library targets `netstandard2.1`, and automated tests run against `net10.0` on GitHub Actions. CI validated 153 tests when publishing version `0.1.2`.
+
+## Installation / Instalação
+
+```bash
+dotnet add package Lagosystem.Modules.NET
+```
+
+NuGet package ID: `Lagosystem.Modules.NET`. Assembly and .NET namespaces: `Lagosystem.Modules`. New releases are published automatically after successful CI on updates to `main`.
 
 ## Community / Comunidade
 
