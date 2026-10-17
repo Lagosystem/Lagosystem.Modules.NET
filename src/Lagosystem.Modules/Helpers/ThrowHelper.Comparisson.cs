@@ -74,7 +74,6 @@ namespace Lagosystem.Modules.Helpers
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [DoesNotReturn]
         internal static void ThrowIfLessOrEqualsThan<T>(T value, T limit, 
             [jba.InvokerParameterName, jba.LocalizationRequired(false)] string? paramName = null)
             where T : IComparable<T>
