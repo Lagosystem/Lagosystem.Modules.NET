@@ -39,7 +39,9 @@ Aceitamos relatos de erros, melhorias na documentação, sugestões de API, dese
 
 ## Policy / Política
 
-- No automatic GitHub Actions workflows have been added. CI, builds, unit tests and NuGet publishing are planned, **not claimed to have run**.
+- The NuGet workflow runs on updates to `main` (including pull request merges), restoring, building and testing before publishing the `Lagosystem.Modules.NET` package via NuGet.org Trusted Publishing (OIDC). It will not publish if any build or test step fails.
+- NuGet package versions are generated as `0.1.<GitHub workflow run number>`. No API keys are stored in repository secrets.
+- The GitHub workflow optimizes the original large PNG icon to 128×128 in the runner before packaging, preserving the source image in Git.
 - No Embarcadero `StringList` implementation is included. Historical imports must also exclude that file and related tests.
 - Third-party source requires license and attribution review before inclusion.
 
